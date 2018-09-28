@@ -85,13 +85,6 @@ public class HomeRepository {
     @Deprecated
     public final MutableLiveData<Integer> meshStatus = new MutableLiveData<>();
 
-//    public final LiveData<Profile> profileObserver;
-    //    默认mesh
-//    public final MediatorLiveData<DefaultMesh> defaultMeshObserver = new MediatorLiveData<>();
-
-    private String sessionId = "";
-
-
     private HomeRepository(Context context) {
         mDataBase = SmartLightDataBase.INSTANCE(context);
         userDao = mDataBase.user();
@@ -112,19 +105,16 @@ public class HomeRepository {
     }
 
 
-    public String getSessionId() {
-        return sessionId;
+    public int getLampsNum() {
+        String meshId = getMeshId();
+        return lampDao.getLampNum(meshId);
     }
-
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
-    }
-
 
     private String getMeshId() {
-        Profile profile = SmartLightApp.INSTANCE().getProfile();
-        return profile != null ? profile.meshId : "";
-
+//        Profile profile = SmartLightApp.INSTANCE().getProfile();
+//        return profile != null ? profile.meshId : "";
+        DefaultMesh defaultMesh = SmartLightApp.INSTANCE().getDefaultMesh();
+        return defaultMesh.id;
     }
 
     private String getUserId() {
@@ -1050,55 +1040,14 @@ public class HomeRepository {
      * @return
      */
     public LiveData<Resource<List<Lamp>>> getDeviceList(int typeId) {
-//        暂且为每次都需要从后台加载
-        boolean shouldLoadFromRemote = true;
         MediatorLiveData<Resource<List<Lamp>>> result = new MediatorLiveData<>();
         result.setValue(Resource.loading(null));
         String meshId = getMeshId();
         LiveData<List<Lamp>> local = lampDao.loadDevices(meshId);
-        result.addSource(local, data -> {
-            result.removeSource(local);
-            if (shouldLoadFromRemote) {
-                //先显示本地数据
-                result.addSource(local, devices -> result.setValue(Resource.loading(devices)));
-                RequestBody requestBody = RequestCreator.requestDeviceList(meshId, typeId);
-                LiveData<ApiResponse<LampList>> remote = kimService.deviceList(requestBody);
-                result.addSource(remote, apiResponse -> {
-                    result.removeSource(local);
-                    result.removeSource(remote);
-                    if (apiResponse.isSuccessful() && apiResponse.body != null && apiResponse.body.getList() != null) {
-                        executors.diskIO().execute(() -> {
-                            List<Lamp> list = apiResponse.body.getList();
-                            if (list.isEmpty()) {
-                                lampDao.deleteDeviceFromMesh(meshId);
-                            } else {
-                                for (Lamp lamp : list) {
-                                    lamp.setMeshId(meshId);
-                                }
-                                lampDao.insertDevices(list);
-                            }
-                            executors.mainThread().execute(() -> {
-                                LiveData<List<Lamp>> db = lampDao.loadDevices(meshId);
-                                result.addSource(db, devices -> {
-//                                result.removeSource(local);
-                                    result.setValue(Resource.success(devices, ""));
-                                });
-                            });
-                        });
-                    } else {
-                        result.addSource(local, devices -> result.setValue(Resource.error(devices, "更新失败")));
-                    }
-                });
-            } else {
-                result.addSource(local, devices -> {
-//                result.removeSource(local);
-                    result.setValue(Resource.success(devices, ""));
-                });
-            }
-        });
-
+        result.addSource(local, lamps -> result.setValue(Resource.success(lamps, "")));
 
         return result;
+
     }
 
 
@@ -1678,11 +1627,6 @@ public class HomeRepository {
         lampDao.updateMeshStatus(brightness, meshId);
     }
 
-    public LiveData<Lamp> observerLampStatus(int deviceId) {
-        String meshId = getMeshId();
-        return lampDao.loadLamp(meshId, deviceId);
-    }
-
 
     //批量更新设备状态
     public void updateDevicesStatus(List<OnlineStatusNotificationParser.DeviceNotificationInfo> notificationInfoList) {
@@ -1691,6 +1635,7 @@ public class HomeRepository {
             for (OnlineStatusNotificationParser.DeviceNotificationInfo notificationInfo : notificationInfoList) {
                 int meshAddress = notificationInfo.meshAddress;
                 int brightness = notificationInfo.brightness;
+                Log.d(TAG, "updateDevicesStatus: ");
                 lampDao.updateDeviceStatus(brightness, meshId, meshAddress);
             }
         });
@@ -1698,5 +1643,10 @@ public class HomeRepository {
 
     public void deleteSceneById(String id) {
         userDao.deleteSceneById(id);
+    }
+
+
+    public void insertDevice(Lamp lamp) {
+        lampDao.insertDevice(lamp);
     }
 }

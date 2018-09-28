@@ -32,7 +32,6 @@ public class MeshEventManager {
 
         @Override
         public void onResume(@NonNull LifecycleOwner owner) {
-//            SmartLightApp smartLightApp = SmartLightApp.INSTANCE();
             application.addEventListener(NotificationEvent.ONLINE_STATUS, eventListener);
             application.addEventListener(DeviceEvent.STATUS_CHANGED, eventListener);
         }

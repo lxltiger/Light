@@ -9,7 +9,7 @@ public final class Light {
 
 //    public String name;
 //    public String macAddress;
-    public int meshAddress;
+//    public int meshAddress;
     public int brightness;
     public int color;
     public int temperature;
@@ -36,15 +36,14 @@ public final class Light {
      * 2-添加成功
      * 当这个可观察的值发生变化时 会在绑定的方法中重新设置icon的图标
      */
-    public ObservableInt mAddStatus = new ObservableInt(BindingAdapters.ADD);
+    public ObservableInt status = new ObservableInt(BindingAdapters.ADD);
 
 
     @Override
     public String toString() {
         return "Light{" +
-                ", meshAddress=" + meshAddress +
                 ", brightness=" + brightness +
-                ", mAddStatus=" + mAddStatus.get() +
+                ", status=" + status.get() +
                 '}';
     }
 }

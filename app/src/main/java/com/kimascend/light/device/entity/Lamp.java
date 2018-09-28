@@ -8,8 +8,10 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.kimascend.light.common.BindingAdapters;
+import com.kimascend.light.model.Light;
 
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * device_id : 10
@@ -42,6 +44,20 @@ public class Lamp implements Parcelable {
     @Ignore
     public ObservableInt lampStatus = new ObservableInt(BindingAdapters.LIGHT_OFF);
 
+    private Lamp(int device_id, int productUuid, int typeId, String name, String mac, String meshId) {
+        this.device_id = device_id;
+        this.productUuid = productUuid;
+        this.typeId = typeId;
+        this.name = name;
+        this.mac = mac;
+        this.meshId = meshId;
+    }
+
+    public static Lamp from(Light light,String meshId) {
+        Lamp lamp = new Lamp(light.raw.meshAddress, light.raw.productUUID, light.type, light.raw.deviceName, light.raw.macAddress, meshId);
+        lamp.id = UUID.randomUUID().toString();
+        return lamp;
+    }
 
     public String getMeshId() {
         return meshId;

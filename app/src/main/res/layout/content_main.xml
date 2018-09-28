@@ -23,29 +23,27 @@
              android:orientation="horizontal">
 
              <RadioButton
-                 android:id="@+id/rb_home"
-                 style="@style/main_radioButton"
-                 android:checked="true"
-                 android:drawableTop="@drawable/selector_radio_button_light"
-                 android:text="@string/title_main_home" />
-
-             <RadioButton
                  android:id="@+id/rb_device"
                  style="@style/main_radioButton"
+                 android:checked="true"
                  android:drawableTop="@drawable/selector_radio_button_hub"
                  android:text="@string/title_main_device" />
 
              <RadioButton
-                 android:id="@+id/rb_scene"
+                 android:id="@+id/rb_group"
                  style="@style/main_radioButton"
                  android:drawableTop="@drawable/selector_radio_button_scene"
                  android:text="@string/title_main_scene" />
-
              <RadioButton
-                 android:id="@+id/rb_more"
+                 android:id="@+id/rb_scene"
+                 style="@style/main_radioButton"
+                 android:drawableTop="@drawable/selector_radio_button_light"
+                 android:text="@string/scene" />
+             <RadioButton
+                 android:id="@+id/rb_alarm"
                  style="@style/main_radioButton"
                  android:drawableTop="@drawable/selector_radio_button_more"
-                 android:text="@string/title_main_more" />
+                 android:text="@string/alarm" />
 
          </RadioGroup>
 

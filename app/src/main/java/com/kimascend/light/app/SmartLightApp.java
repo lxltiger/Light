@@ -41,7 +41,6 @@ public final class SmartLightApp extends TelinkApplication {
         super.onCreate();
         sLightApp = this;
         retrieveLocalData();
-//        doInit();
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         AdvanceStrategy.setDefault(new MySampleAdvanceStrategy());
         mAppExecutors = new AppExecutors();
@@ -123,7 +122,9 @@ public final class SmartLightApp extends TelinkApplication {
         String mesh = SharePrefencesUtil.getDefaultMesh();
         Log.d(TAG, mesh);
         defaultMesh = gson.fromJson(mesh, DefaultMesh.class);
-
+        if (defaultMesh == null) {
+            defaultMesh=new DefaultMesh();
+        }
     }
 
 

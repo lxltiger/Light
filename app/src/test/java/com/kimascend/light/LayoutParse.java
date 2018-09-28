@@ -12,7 +12,7 @@ import java.util.List;
  * 使用用Layout布局生成binding
  */
 public class LayoutParse {
-    private String path = "F:\\lxl\\android\\SmartLight\\app\\src\\main\\res\\layout";
+    private String path = "F:\\lxl\\android\\SmartLight\\app\\src\\fragment_add_lamp\\res\\layout";
 
     private void capFirst(String s[]) {
         if (s == null ||s.length==1){

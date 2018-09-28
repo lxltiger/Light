@@ -27,10 +27,7 @@ public class HomeViewModel extends AndroidViewModel {
     private static final String TAG = HomeViewModel.class.getSimpleName();
     private HomeRepository repository;
 
-    //    用户资料
-//    public final LiveData<Profile> profile;
-    //    默认的Mesh
-//    public final LiveData<DefaultMesh> defaultMeshObserver;
+
 
     //    分享mesh
     public MutableLiveData<String> shareMeshRequest = new MutableLiveData<>();
@@ -38,18 +35,6 @@ public class HomeViewModel extends AndroidViewModel {
     public final LiveData<Resource<Boolean>> shareMeshObserver;
 
 
-    // lamp列表请求
-    public MutableLiveData<Integer> lampListRequest = new MutableLiveData<>();
-    // lamp列表监听
-//    public final LiveData<Resource<List<Lamp>>> lampListObserver;
-
-    // 插座列表请求
-    public MutableLiveData<Integer> socketListRequest = new MutableLiveData<>();
-//    public final LiveData<Resource<List<Lamp>>> socketListObserver;
-
-    // 面板列表请求
-    public MutableLiveData<Integer> panelListRequest = new MutableLiveData<>();
-//    public final LiveData<Resource<List<Lamp>>> panelListObserver;
 
     public MutableLiveData<Integer> deviceListRequest = new MutableLiveData<>();
     public final LiveData<Resource<List<Lamp>>> deviceListObserver;
@@ -89,9 +74,6 @@ public class HomeViewModel extends AndroidViewModel {
 
         shareMeshObserver = Transformations.switchMap(shareMeshRequest, repository::shareMesh);
 
-//        lampListObserver = Transformations.switchMap(lampListRequest, input -> repository.getDeviceList(input));
-//        socketListObserver = Transformations.switchMap(socketListRequest, input -> repository.getDeviceList(input));
-//        panelListObserver = Transformations.switchMap(panelListRequest, input -> repository.getDeviceList(input));
 
         deviceListObserver = Transformations.switchMap(deviceListRequest, input -> repository.getDeviceList(input));
 

@@ -19,6 +19,9 @@ public interface LampDao {
     @Query("select * from lamp where meshId=:meshId")
     LiveData<List<Lamp>> loadLampsUnderMesh(String meshId);
 
+    @Query("select count(*) from lamp where meshId=:meshId")
+    int getLampNum(String meshId);
+
 
     @Query("select * from lamp where meshId=:meshId and typeId=:typeId")
     LiveData<List<Lamp>> loadDevices(String meshId,int typeId);
@@ -48,6 +51,9 @@ public interface LampDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertDevices(List<Lamp> lamps);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertDevice(Lamp lamp);
 
 
     //更新制定设备的状态  需要 device id 和 mesh id  brightness为0就是关，-1 掉线 >0 就是开

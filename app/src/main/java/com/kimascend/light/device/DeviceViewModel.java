@@ -9,9 +9,11 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.kimascend.light.api.ApiResponse;
 import com.kimascend.light.device.entity.AddHubRequest;
+import com.kimascend.light.device.entity.Lamp;
 import com.kimascend.light.model.Light;
 import com.kimascend.light.model.RequestResult;
 import com.kimascend.light.repository.HomeRepository;
@@ -39,8 +41,7 @@ public class DeviceViewModel extends AndroidViewModel {
     // 获取灯具mesh address
     public final MediatorLiveData<Light> lampMeshAddressObserver=new MediatorLiveData<>();
 
-    //我的mesh列表
-//    public LiveData<List<Mesh>> myMeshList;
+
 
     public DeviceViewModel(@NonNull Application application) {
         super(application);
@@ -50,8 +51,9 @@ public class DeviceViewModel extends AndroidViewModel {
 
     }
 
-    public void getDeviceMeshAddress(Light light) {
-        LiveData<ApiResponse<RequestResult>> deviceId = repository.getDeviceId();
+    public void getDeviceMeshAddress(String meshId,Light light) {
+
+       /* LiveData<ApiResponse<RequestResult>> deviceId = repository.getDeviceId();
         lampMeshAddressObserver.addSource(deviceId, new Observer<ApiResponse<RequestResult>>() {
             @Override
             public void onChanged(@Nullable ApiResponse<RequestResult> apiResponse) {
@@ -63,10 +65,18 @@ public class DeviceViewModel extends AndroidViewModel {
                     lampMeshAddressObserver.setValue(null);
                 }
             }
-        });
+        });*/
+    }
+
+    //当前灯具的addr就是数据库总数加1
+    public int getMeshAddress() {
+        return repository.getLampsNum()+1;
     }
 
 
+    public void insertDevice(Lamp lamp) {
+        repository.insertDevice(lamp);
+    }
 
 
 

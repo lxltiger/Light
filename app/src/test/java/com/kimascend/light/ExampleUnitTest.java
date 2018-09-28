@@ -55,7 +55,7 @@ public class ExampleUnitTest {
 
     //由于资源文件的更新，每次复制不同像素的图片十分繁琐，这里比较最新的资源文件的，找到增加的部分 复制过去
     private final String src = "C:\\Users\\Administrator\\Desktop\\smartLight\\";
-    private final String des = "F:\\lxl\\android\\SmartLight\\app\\src\\main\\res\\";
+    private final String des = "F:\\lxl\\android\\SmartLight\\app\\src\\fragment_add_lamp\\res\\";
 
     @Test
     public void copyOnDifference() throws IOException {

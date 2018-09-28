@@ -8,9 +8,10 @@ import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public abstract class DataBoundAdapter<T,V extends ViewDataBinding> extends RecyclerView.Adapter<DataBoundViewHolder>{
+public abstract class DataBoundAdapter<T,V extends ViewDataBinding> extends RecyclerView.Adapter<DataBoundViewHolder<V>>{
 
     private List<T> items;
     private int version;
@@ -77,14 +78,45 @@ public abstract class DataBoundAdapter<T,V extends ViewDataBinding> extends Recy
 
     @NonNull
     @Override
-    public DataBoundViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        V v=getBinding(parent);
-        return new DataBoundViewHolder(v);
+    public DataBoundViewHolder<V> onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        V binding= createBinding(parent);
+        return new DataBoundViewHolder<>(binding);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull DataBoundViewHolder holder, int position) {
-        bind(holder, items,position);
+    public void onBindViewHolder(@NonNull DataBoundViewHolder<V> holder, int position) {
+        bind(holder.binding, items.get(position));
+        holder.binding.executePendingBindings();
+    }
+
+    protected void add(T item) {
+        if (item == null) {
+            return;
+        }
+        if (items == null) {
+            items =new ArrayList<>();
+        }
+        items.add(item);
+        notifyItemChanged(getItemCount() - 1);
+    }
+
+
+    protected T get(Predicate<T> predicate) {
+        if (items != null) {
+            for (T item : items) {
+                if (predicate.test(item)) {
+                    return item;
+                }
+            }
+        }
+        return null;
+    }
+
+    protected void clear() {
+        if (items != null) {
+            items.clear();
+            notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -96,9 +128,9 @@ public abstract class DataBoundAdapter<T,V extends ViewDataBinding> extends Recy
 
     protected abstract boolean areItemsTheSame(T oldItem, T newItem);
 
-    protected abstract void bind(DataBoundViewHolder holder, List<T> items, int position);
+    protected abstract void bind(V binding,T item);
 
-    protected abstract V getBinding(ViewGroup parent);
+    protected abstract V createBinding(ViewGroup parent);
 
 
 }

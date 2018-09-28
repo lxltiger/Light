@@ -28,12 +28,12 @@ public class DefaultMesh implements Parcelable{
     public boolean isMine;
 
     public DefaultMesh() {
-        this.password = "";
-        this.name = "";
+        this.password = "123456";
+        this.name = "kim";
         this.creater = "";
         this.aijiaName = "";
         this.aijiaIcon = "";
-        this.id = "";
+        this.id = "6e855981180e420c8fb1cf3d9acd82ed";
         shareCounts = "0";
         deviceCount=0;
         gatewayId = "";

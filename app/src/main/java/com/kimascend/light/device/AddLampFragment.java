@@ -1,8 +1,6 @@
 package com.kimascend.light.device;
 
 
-import android.app.Activity;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -10,26 +8,22 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.ArrayMap;
 import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.kimascend.light.CallBack;
 import com.kimascend.light.Config;
 import com.kimascend.light.R;
-import com.kimascend.light.api.ApiResponse;
 import com.kimascend.light.app.SmartLightApp;
 import com.kimascend.light.common.BindingAdapters;
 import com.kimascend.light.databinding.FragmentAddLampBinding;
+import com.kimascend.light.device.entity.Lamp;
 import com.kimascend.light.mesh.DefaultMesh;
 import com.kimascend.light.model.Light;
-import com.kimascend.light.model.RequestResult;
 import com.kimascend.light.sevice.TelinkLightService;
-import com.kimascend.light.utils.ToastUtil;
 import com.telink.bluetooth.event.DeviceEvent;
 import com.telink.bluetooth.event.LeScanEvent;
 import com.telink.bluetooth.event.MeshEvent;
@@ -43,10 +37,10 @@ import com.telink.util.EventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static com.kimascend.light.common.BindingAdapters.ADD;
 import static com.kimascend.light.common.BindingAdapters.ADDED;
+import static com.kimascend.light.utils.ToastUtil.showToast;
 
 /**
  * 扫面添加灯具页面
@@ -56,7 +50,7 @@ import static com.kimascend.light.common.BindingAdapters.ADDED;
  * 现在只扫描设备来显示 限制15秒时间 超过这个时间停止扫描至用户手动重扫
  * 如果扫描过程中用户点击重扫 停止当前的扫描 清空列表 重新开始15秒扫描添加
  */
-public class AddLampFragment extends Fragment implements EventListener<String>, CallBack {
+public class AddLampFragment extends Fragment implements EventListener<String> {
     public static final String TAG = AddLampFragment.class.getSimpleName();
 
     /**
@@ -67,25 +61,21 @@ public class AddLampFragment extends Fragment implements EventListener<String>, 
      * 是否扫描 一进来就扫描 所以默认为true  也是停止扫描的标记
      */
     private boolean isScan = true;
-    private FragmentAddLampBinding mBinding;
+    private FragmentAddLampBinding binding;
 
     /**
      * 新设备适配器
      */
-    private AddLampAdapter mAdapter;
+    private AddLampAdapter lampAdapter;
     /**
      * 添加状态
      */
     boolean isAdd = false;
 
-    private Handler mHandler = new Handler();
+    private Handler handler = new Handler();
+
     private DeviceViewModel viewModel;
-//    private String meshName = "";
-//    private String meshPsw = "";
-    /**
-     * 添加成功 通知deviceFragment刷新
-     */
-//    private boolean addSucceed=false;
+
     private SparseIntArray deviceType = new SparseIntArray();
 
     public static AddLampFragment newInstance() {
@@ -123,13 +113,14 @@ public class AddLampFragment extends Fragment implements EventListener<String>, 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_lamp, container, false);
-        mBinding.setHandler(this);
-        List<Light> mLights = new ArrayList<>();
-        mAdapter = new AddLampAdapter(mLights, mOnHandleNewLightListener);
-        mBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mBinding.recyclerView.setAdapter(mAdapter);
-        return mBinding.getRoot();
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_lamp, container, false);
+        binding.toolbar.toolbar.setNavigationOnClickListener((v -> getActivity().finish()));
+        binding.toolbar.toolbar.inflateMenu(R.menu.fragment_add_lamp);
+        binding.toolbar.toolbar.setOnMenuItemClickListener(this::onMenuItemClick);
+        lampAdapter = new AddLampAdapter(this::addLamp);
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        binding.recyclerView.setAdapter(lampAdapter);
+        return binding.getRoot();
     }
 
     @Override
@@ -137,57 +128,9 @@ public class AddLampFragment extends Fragment implements EventListener<String>, 
         super.onActivityCreated(savedInstanceState);
         isScan = true;
         startScan(100);
-        mBinding.setIsScanning(true);
-        mHandler.postDelayed(mStopScan, SCANNING_SPAN);
-        viewModel = ViewModelProviders.of(getActivity()).get(DeviceViewModel.class);
-        subscribeUI(viewModel);
-    }
-
-    private void subscribeUI(DeviceViewModel viewModel) {
-        viewModel.addLampObserver.observe(this, new Observer<ApiResponse<RequestResult>>() {
-            @Override
-            public void onChanged(@Nullable ApiResponse<RequestResult> apiResponse) {
-                if (apiResponse.isSuccessful() && apiResponse.body.succeed()) {
-                    showToast(apiResponse.body.resultMsg);
-                    getActivity().setResult(Activity.RESULT_OK);
-                } else {
-                    ToastUtil.showToast("上报失败");
-                }
-            }
-        });
-
-        viewModel.lampMeshAddressObserver.observe(this, new Observer<Light>() {
-            @Override
-            public void onChanged(@Nullable Light light) {
-                if (light != null) {
-                    light.mAddStatus.set(BindingAdapters.ADDING);
-                    LeUpdateParameters params = Parameters.createUpdateParameters();
-                    params.setOldMeshName(Config.FACTORY_NAME);
-                    params.setOldPassword(Config.FACTORY_PASSWORD);
-                    DefaultMesh defaultMesh = SmartLightApp.INSTANCE().getDefaultMesh();
-                    String meshName = "";
-                    String meshPsw = "";
-                    if (defaultMesh != null) {
-                        meshName = defaultMesh.name;
-                        meshPsw = defaultMesh.password;
-                    }
-//                    params.setOldMeshName("telink_mesh1");
-//                    params.setOldPassword("123");
-                    params.setNewMeshName(meshName);
-                    params.setNewPassword(meshPsw);
-                    params.setUpdateDeviceList(light.raw);
-                    TelinkLightService.Instance().idleMode(true);
-                    //加灯
-                    TelinkLightService.Instance().updateMesh(params);
-                } else {
-                    ToastUtil.showToast("获取灯具地址失败");
-                }
-            }
-        });
-    }
-
-    private void showToast(String msg) {
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+        binding.setIsScanning(true);
+        handler.postDelayed(mStopScan, SCANNING_SPAN);
+        viewModel = ViewModelProviders.of(this).get(DeviceViewModel.class);
     }
 
     @Override
@@ -195,7 +138,7 @@ public class AddLampFragment extends Fragment implements EventListener<String>, 
         super.onDestroy();
         SmartLightApp smartLightApp = SmartLightApp.INSTANCE();
         smartLightApp.removeEventListener(this);
-        mHandler.removeCallbacksAndMessages(null);
+        handler.removeCallbacksAndMessages(null);
     }
 
     /**
@@ -207,11 +150,10 @@ public class AddLampFragment extends Fragment implements EventListener<String>, 
     private void startScan(int delay) {
         Log.d(TAG, "startScan: " + isScan);
         if (isScan) {
-            mHandler.postDelayed(() -> {
+            handler.postDelayed(() -> {
                 //扫描参数
                 LeScanParameters params = LeScanParameters.create();
                 params.setMeshName(Config.FACTORY_NAME);
-//                params.setMeshName("telink_mesh1");
                 params.setOutOfMeshName("kick");
                 params.setTimeoutSeconds(15);
                 params.setScanMode(false);
@@ -219,7 +161,6 @@ public class AddLampFragment extends Fragment implements EventListener<String>, 
 
             }, delay);
         }
-
     }
 
 
@@ -232,7 +173,7 @@ public class AddLampFragment extends Fragment implements EventListener<String>, 
             Log.d(TAG, "run: stop scan");
             isScan = false;
             TelinkLightService.Instance().idleMode(true);
-            mBinding.setIsScanning(false);
+            binding.setIsScanning(false);
         }
     };
 
@@ -247,31 +188,18 @@ public class AddLampFragment extends Fragment implements EventListener<String>, 
             case LeScanEvent.LE_SCAN_TIMEOUT:
                 isScan = false;
                 TelinkLightService.Instance().idleMode(true);
-                mBinding.setIsScanning(false);
+                binding.setIsScanning(false);
                 break;
             case DeviceEvent.STATUS_CHANGED:
                 onDeviceStatusChanged((DeviceEvent) event);
                 break;
             case MeshEvent.OFFLINE:
-                onMeshOffline();
+                showToast("设备离线");
             case MeshEvent.ERROR:
-                onMeshEvent((MeshEvent) event);
+                showToast(getString(R.string.start_bollue2));
+
                 break;
         }
-    }
-
-
-    /**
-     * 设备离线
-     */
-    private void onMeshOffline() {
-        showToast("设备离线");
-
-    }
-
-    private void onMeshEvent(MeshEvent event) {
-        showToast(getString(R.string.start_bollue2));
-//        new AlertDialog.Builder(getActivity()).setMessage(getResources().getString(R.string.start_bollue2)).show();
     }
 
 
@@ -287,7 +215,7 @@ public class AddLampFragment extends Fragment implements EventListener<String>, 
         light.mDescription = String.format("%s\n%s", deviceInfo.meshName, deviceInfo.macAddress);
         //用来区分设备类型
         light.type = deviceType.get(deviceInfo.productUUID);
-        mAdapter.addLight(light);
+        lampAdapter.addLight(light);
 
     }
 
@@ -302,30 +230,30 @@ public class AddLampFragment extends Fragment implements EventListener<String>, 
         Log.d(TAG, " onDeviceStatusChanged: " + deviceInfo.toString());
         switch (deviceInfo.status) {
             case LightAdapter.STATUS_UPDATE_MESH_COMPLETED: {
-//                Light light = mAdapter.getLight(deviceInfo.meshAddress);
-                Light light = mAdapter.getLightByMAC(deviceInfo.macAddress);
+                Light light = lampAdapter.getLightByMAC(deviceInfo.macAddress);
                 if (light != null) {
-                    light.mAddStatus.set(BindingAdapters.ADDED);
-                    light.raw.meshAddress = deviceInfo.meshAddress;
+                    light.status.set(BindingAdapters.ADDED);
+//                    light.raw.meshAddress = deviceInfo.meshAddress;
                     light.raw.meshName = deviceInfo.meshName;
                     light.raw.deviceName = deviceInfo.deviceName;
-                    //上传到网络
-                    updateLight(light);
+                    DefaultMesh defaultMesh = SmartLightApp.INSTANCE().getDefaultMesh();
+                    Lamp lamp = Lamp.from(light, defaultMesh.id);
+                    viewModel.insertDevice(lamp);
                 }
                 isAdd = false;
             }
             break;
             case LightAdapter.STATUS_UPDATE_MESH_FAILURE:
             case LightAdapter.STATUS_LOGOUT: {
-                Light light = mAdapter.getLightByMAC(deviceInfo.macAddress);
+                Light light = lampAdapter.getLightByMAC(deviceInfo.macAddress);
                 //如果A灯添加成功 下一次添加B灯时会收到A灯登出 更新失败的回调 防止状态被修改 判断是否已经修改成功
-                if (light != null && light.mAddStatus.get() != ADDED) {
-                    light.mAddStatus.set(ADD);
+                if (light != null && light.status.get() != ADDED) {
+                    light.status.set(ADD);
                     isAdd = false;
                 }
                 //已添加的设备是登出状态，meshName已改变，也会扫描到，在此排除
                 if (deviceInfo.meshName.equals(Config.FACTORY_NAME)) {
-                    ToastUtil.showToast("添加失败");
+                    showToast("添加失败");
                 }
             }
             break;
@@ -333,65 +261,40 @@ public class AddLampFragment extends Fragment implements EventListener<String>, 
     }
 
     /**
-     * 条目的点击事件回调
-     * 点击条目 切换开关
-     * 长按进入灯具设置页面
-     * 点击右侧添加按钮 修改mesh名称和密码
+     * 添加灯具
      * <p>
      * 配合Databinding 在item_light_add.xml中使用
      * Light 的字段使用Observable 这样只要在这里修改值，相关UI会自动更新
      */
-    private OnHandleNewLightListener mOnHandleNewLightListener = new OnHandleNewLightListener() {
-        @Override
-        public void onItemClick(Light light) {
+    public void addLamp(Light light) {
+        if (light.status.get() == ADD) {
+            if (!isAdd) {
+                isAdd = true;
+                light.raw.meshAddress = viewModel.getMeshAddress();
+                light.status.set(BindingAdapters.ADDING);
+                LeUpdateParameters params = Parameters.createUpdateParameters();
+                params.setOldMeshName(Config.FACTORY_NAME);
+                params.setOldPassword(Config.FACTORY_PASSWORD);
+                DefaultMesh defaultMesh = SmartLightApp.INSTANCE().getDefaultMesh();
+                String meshName = defaultMesh.name;
+                String meshPsw = defaultMesh.password;
+                params.setNewMeshName(meshName);
+                params.setNewPassword(meshPsw);
+                params.setUpdateDeviceList(light.raw);
+                TelinkLightService.Instance().idleMode(true);
+                //加灯
+                TelinkLightService.Instance().updateMesh(params);
 
-        }
-
-        @Override
-        public void onAddClick(Light light) {
-            Log.d(TAG, "onAddClick: " + light.toString());
-            if (light.mAddStatus.get() == ADD) {
-                if (!isAdd) {
-                    isAdd = true;
-                    viewModel.getDeviceMeshAddress(light);
-                } else {
-                    ToastUtil.showToast("正在添加");
-                }
+            } else {
+                showToast("正在添加");
             }
         }
-
-        @Override
-        public boolean onItemLongClick(Light light) {
-            return true;
-        }
-    };
-
-    /**
-     * 更新用户名和密码成功后上传到网络
-     * 如果上传失败 是否需要恢复灯具配置
-     *
-     * @param light
-     */
-    private void updateLight(Light light) {
-        String gatewayId = "d-" + java.util.UUID.randomUUID().toString();
-        String meshAddress = String.valueOf(light.raw.meshAddress);
-        String factoryId = String.valueOf(light.raw.meshUUID);
-        String productUuid = String.valueOf(light.raw.productUUID);
-        String typeId = String.valueOf(light.type);
-
-        //参数存入集合
-        Map<String, String> map = new ArrayMap<>();
-        map.put("name", light.raw.deviceName);
-        map.put("deviceId", meshAddress);
-        map.put("mac", light.raw.macAddress);
-        map.put("gatewayId", gatewayId);
-        map.put("typeId", typeId);
-        map.put("factoryId", factoryId);
-        map.put("productUuid", productUuid);
-        viewModel.addLampRequest.setValue(map);
-
     }
 
+    public boolean onMenuItemClick(MenuItem item) {
+        refresh();
+        return true;
+    }
 
     /**
      * 刷新当前设备
@@ -401,26 +304,14 @@ public class AddLampFragment extends Fragment implements EventListener<String>, 
 //        暂停当前扫描 有可能还在扫描当中
         TelinkLightService.Instance().idleMode(true);
 //        清空设备列表
-        mAdapter.clear();
+        lampAdapter.clear();
 //        显示扫描等待框
-        mBinding.setIsScanning(true);
+        binding.setIsScanning(true);
         isScan = true;
 //        开始扫描
         startScan(100);
 //        30秒后停止
-        mHandler.postDelayed(mStopScan, SCANNING_SPAN);
-    }
-
-    @Override
-    public void handleClick(View view) {
-        switch (view.getId()) {
-            case R.id.iv_refresh:
-                refresh();
-                break;
-            case R.id.iv_back:
-                getActivity().finish();
-                break;
-        }
+        handler.postDelayed(mStopScan, SCANNING_SPAN);
     }
 
 }

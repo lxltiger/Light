@@ -93,7 +93,6 @@ public class NavigatorController {
     public void navigateToAddLamp() {
         fm.beginTransaction()
                 .replace(container, AddLampFragment.newInstance(), AddLampFragment.TAG)
-                .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
 

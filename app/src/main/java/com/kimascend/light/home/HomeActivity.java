@@ -54,67 +54,39 @@ import static com.kimascend.light.utils.ToastUtil.showToast;
 /**
  * 主页含4个UI
  */
-public class HomeActivity extends AppCompatActivity
-        implements /*RadioGroup.OnCheckedChangeListener,*/ EventListener<String> {
+public class HomeActivity extends AppCompatActivity implements  EventListener<String> {
     private static final String TAG = HomeActivity.class.getSimpleName();
     private Handler handler = new Handler();
     private NavigatorController navigatorController;
-    private boolean isEmptyMesh = true;
     private HomeViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_main);
-//        addEventListener();
         //底部选项按钮
         RadioGroup rgMainRadioGroup = (RadioGroup) findViewById(R.id.rg_main_group);
         rgMainRadioGroup.setOnCheckedChangeListener(this::onCheckedChanged);
         navigatorController = new NavigatorController(this, R.id.fl_main_container);
         if (savedInstanceState == null) {
-            navigatorController.navigateToHome();
+            navigatorController.navigateToDevice();
         }
         SmartLightApp smartLightApp = SmartLightApp.INSTANCE();
         smartLightApp.doInit();
-        Profile profile = smartLightApp.getProfile();
-        isEmptyMesh = TextUtils.isEmpty(profile.meshId);
-
         viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
-        subscribeUI(viewModel);
 
         addBlueToothStatusReceiver();
 
-        try {
+        /*try {
             MQTTClient.INSTANCE().startConnect();
         } catch (IOException e) {
             Log.d(TAG, "fail to start mqtt");
             e.printStackTrace();
-        }
+        }*/
     }
 
 
-    private void subscribeUI(HomeViewModel viewModel) {
 
-        viewModel.shareMeshObserver.observe(this, new Observer<Resource<Boolean>>() {
-            @Override
-            public void onChanged(@Nullable Resource<Boolean> resource) {
-                if (Status.SUCCESS == resource.status) {
-                    Log.d(TAG, "onChanged:shareMeshObserver ");
-                    showToast(resource.message);
-                    TelinkLightService.Instance().idleMode(true);
-                    HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag(HomeFragment.TAG);
-                    if (homeFragment != null) {
-                       homeFragment.handleMesh();
-                    }
-                    autoConnect();
-
-                }else if(Status.ERROR == resource.status){
-                    showToast(resource.message);
-                }
-            }
-        });
-
-    }
 
 
     private void addBlueToothStatusReceiver() {
@@ -168,14 +140,11 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
-//        removeEventListener();
-//        TelinkLightService.Instance().disableAutoRefreshNotify();
         unregisterReceiver(mBlueToothStatusReceiver);
         SmartLightApp.INSTANCE().doDestroy();
         handler.removeCallbacks(null);
-        MQTTClient.INSTANCE().exit();
+//        MQTTClient.INSTANCE().exit();
         super.onDestroy();
-        Log.d(TAG, "onDestroy: ");
     }
 
     private void requireBlueTooth() {
@@ -223,21 +192,19 @@ public class HomeActivity extends AppCompatActivity
 
 //    @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
-        if (isEmptyMesh) {
-            ToastUtil.showToast("请先添加一个家");
-        }
+
         switch (checkedId) {
-            case R.id.rb_home:
-                navigatorController.navigateToHome();
+            case R.id.rb_scene:
+                navigatorController.navigateToSceneList();
                 break;
             case R.id.rb_device:
                 navigatorController.navigateToDevice();
                 break;
-            case R.id.rb_scene:
+            case R.id.rb_group:
                 navigatorController.navigateToGroup();
                 break;
-            case R.id.rb_more:
-                navigatorController.navigateToMore();
+            case R.id.rb_alarm:
+                navigatorController.navigateToClockList();
                 break;
         }
     }
@@ -320,12 +287,6 @@ public class HomeActivity extends AppCompatActivity
 
     private void onDeviceStatusChanged(DeviceEvent event) {
         DeviceInfo deviceInfo = event.getArgs();
-        String meshName;
-       /* if (mesh != null) {
-            meshName = mesh.aijiaName;
-        } else {
-            meshName = deviceInfo.meshName;
-        }*/
         switch (deviceInfo.status) {
             case LightAdapter.STATUS_LOGIN:
                 Log.d(TAG, "connecting success");
