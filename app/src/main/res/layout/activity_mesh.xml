@@ -5,11 +5,11 @@
 
     <data>
 
-        <import type="com.example.ledwisdom1.api.Status" />
+        <import type="com.kimascend.light.api.Status" />
 
         <variable
             name="resource"
-            type="com.example.ledwisdom1.api.Resource" />
+            type="com.kimascend.light.api.Resource" />
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -17,7 +17,7 @@
         android:layout_height="match_parent"
         tools:context=".mesh.MeshActivity">
 
-        <com.example.ledwisdom1.view.CustomViewPager
+        <com.kimascend.light.view.CustomViewPager
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

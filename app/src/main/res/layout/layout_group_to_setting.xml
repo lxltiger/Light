@@ -8,11 +8,11 @@
 
         <variable
             name="group"
-            type="com.example.ledwisdom1.home.entity.Group" />
+            type="com.kimascend.light.home.entity.Group" />
 
         <variable
             name="handler"
-            type="com.example.ledwisdom1.CallBack" />
+            type="com.kimascend.light.CallBack" />
 
         <variable
             name="isSetting"

@@ -11,7 +11,7 @@
 
         <variable
             name="handler"
-            type="com.example.ledwisdom1.clock.ClockFragment" />
+            type="com.kimascend.light.clock.ClockFragment" />
 
         <variable
             name="type"

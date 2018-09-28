@@ -7,13 +7,13 @@
 
         <variable
             name="handler"
-            type="com.example.ledwisdom1.CallBack" />
+            type="com.kimascend.light.CallBack" />
 
-        <import type="com.example.ledwisdom1.api.Status" />
+        <import type="com.kimascend.light.api.Status" />
 
         <variable
             name="resource"
-            type="com.example.ledwisdom1.api.Resource" />
+            type="com.kimascend.light.api.Resource" />
     </data>
 
     <android.support.constraint.ConstraintLayout

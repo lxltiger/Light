@@ -10,11 +10,11 @@
 
         <variable
             name="viewModel"
-            type="com.example.ledwisdom1.mesh.MeshViewModel" />
+            type="com.kimascend.light.mesh.MeshViewModel" />
 
         <variable
             name="handler"
-            type="com.example.ledwisdom1.CallBack" />
+            type="com.kimascend.light.CallBack" />
 
 
     </data>

@@ -5,17 +5,17 @@
 
     <data>
 
-        <import type="com.example.ledwisdom1.api.Status" />
+        <import type="com.kimascend.light.api.Status" />
 
         <import type="android.view.View" />
 
         <variable
             name="resource"
-            type="com.example.ledwisdom1.api.Resource" />
+            type="com.kimascend.light.api.Resource" />
 
         <variable
             name="viewModel"
-            type="com.example.ledwisdom1.activity.LightSettingViewModel" />
+            type="com.kimascend.light.activity.LightSettingViewModel" />
 
         <variable
             name="showMenu"
@@ -74,7 +74,7 @@
 
         </RadioGroup>
 
-        <com.example.ledwisdom1.view.RGBView
+        <com.kimascend.light.view.RGBView
             android:id="@+id/iv_rgb"
             android:layout_width="240dp"
             android:layout_height="240dp"

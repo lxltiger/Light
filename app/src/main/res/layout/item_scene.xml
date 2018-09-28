@@ -8,11 +8,11 @@
 
         <variable
             name="scene"
-            type="com.example.ledwisdom1.scene.Scene" />
+            type="com.kimascend.light.scene.Scene" />
 
         <variable
             name="handler"
-            type="com.example.ledwisdom1.scene.OnHandleSceneListener" />
+            type="com.kimascend.light.scene.OnHandleSceneListener" />
     </data>
 
 
@@ -48,10 +48,10 @@
                 android:id="@+id/edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/btn_setting"
+                app:srcCompat="@drawable/ic_settings_black_24dp"
                 android:onClick="@{()->handler.onEditClick(scene)}"
                 android:layout_gravity="end|top"
-                android:layout_margin="10dp"
+                android:layout_margin="8dp"
                 />
         </android.support.v7.widget.CardView>
 

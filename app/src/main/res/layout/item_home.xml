@@ -8,7 +8,7 @@
 
         <variable
             name="myData"
-            type="com.example.ledwisdom1.home.entity.MyData" />
+            type="com.kimascend.light.home.entity.MyData" />
     </data>
 
     <android.support.constraint.ConstraintLayout

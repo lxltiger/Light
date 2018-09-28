@@ -6,11 +6,11 @@
 
         <variable
             name="viewModel"
-            type="com.example.ledwisdom1.home.HomeViewModel"/>
+            type="com.kimascend.light.home.HomeViewModel"/>
 
         <variable
             name="handler"
-            type="com.example.ledwisdom1.home.HomeFragment"/>
+            type="com.kimascend.light.home.HomeFragment"/>
     </data>
 
     <android.support.constraint.ConstraintLayout

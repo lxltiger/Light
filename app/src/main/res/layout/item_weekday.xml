@@ -8,7 +8,7 @@
 
         <variable
             name="weekday"
-            type="com.example.ledwisdom1.clock.WeekDay" />
+            type="com.kimascend.light.clock.WeekDay" />
     </data>
 
    <CheckBox

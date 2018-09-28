@@ -8,11 +8,11 @@
 
         <variable
             name="clock"
-            type="com.example.ledwisdom1.clock.Clock" />
+            type="com.kimascend.light.clock.Clock" />
 
         <variable
             name="listener"
-            type="com.example.ledwisdom1.clock.OnHandleClockListener" />
+            type="com.kimascend.light.clock.OnHandleClockListener" />
 
 
 

@@ -6,7 +6,7 @@
 
         <variable
             name="handler"
-            type="com.example.ledwisdom1.CallBack" />
+            type="com.kimascend.light.CallBack" />
 
         <variable
             name="showTick"
@@ -55,7 +55,7 @@
 
         </android.support.v7.widget.Toolbar>
 
-        <com.example.ledwisdom1.view.CustomViewPager
+        <com.kimascend.light.view.CustomViewPager
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

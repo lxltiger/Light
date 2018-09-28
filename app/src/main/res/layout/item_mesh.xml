@@ -7,11 +7,11 @@
 
         <variable
             name="mesh"
-            type="com.example.ledwisdom1.mesh.Mesh" />
+            type="com.kimascend.light.mesh.Mesh" />
 
         <variable
             name="handler"
-            type="com.example.ledwisdom1.mesh.OnMeshListener" />
+            type="com.kimascend.light.mesh.OnMeshListener" />
 
     </data>
 

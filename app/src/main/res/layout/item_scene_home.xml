@@ -5,16 +5,16 @@
 
     <data>
 
-        <import type="com.example.ledwisdom1.view.ImageTransformationType" />
+        <import type="com.kimascend.light.view.ImageTransformationType" />
 
 
         <variable
             name="scene"
-            type="com.example.ledwisdom1.scene.Scene" />
+            type="com.kimascend.light.scene.Scene" />
 
         <variable
             name="handler"
-            type="com.example.ledwisdom1.scene.OnHandleSceneListener" />
+            type="com.kimascend.light.scene.OnHandleSceneListener" />
     </data>
 
 

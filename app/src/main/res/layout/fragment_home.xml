@@ -7,18 +7,18 @@
 
         <variable
             name="viewModel"
-            type="com.example.ledwisdom1.home.HomeViewModel" />
+            type="com.kimascend.light.home.HomeViewModel" />
 
         <variable
             name="handler"
-            type="com.example.ledwisdom1.home.HomeFragment" />
+            type="com.kimascend.light.home.HomeFragment" />
     </data>
 
 
       <android.support.constraint.ConstraintLayout
           android:layout_width="match_parent"
           android:layout_height="match_parent">
-          <com.example.ledwisdom1.view.CustomViewPager
+          <com.kimascend.light.view.CustomViewPager
               android:id="@+id/viewPager"
               android:layout_width="match_parent"
               android:layout_height="match_parent" />

@@ -7,11 +7,11 @@
 
         <variable
             name="titleBar"
-            type="com.example.ledwisdom1.model.TitleBar" />
+            type="com.kimascend.light.model.TitleBar" />
 
         <variable
             name="handler"
-            type="com.example.ledwisdom1.fragment.LampDetailFragment" />
+            type="com.kimascend.light.fragment.LampDetailFragment" />
 
          </data>
 

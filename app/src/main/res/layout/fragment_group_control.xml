@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.ledwisdom1.device.DeviceControlViewModel" />
+            type="com.kimascend.light.device.DeviceControlViewModel" />
 
     </data>
 
@@ -62,7 +62,7 @@
 
         </RadioGroup>
 
-        <com.example.ledwisdom1.view.RGBView
+        <com.kimascend.light.view.RGBView
             android:id="@+id/iv_rgb"
             android:layout_width="240dp"
             android:layout_height="240dp"

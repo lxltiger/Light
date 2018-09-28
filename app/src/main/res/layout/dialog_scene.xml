@@ -7,7 +7,7 @@
 
         <variable
             name="handler"
-            type="com.example.ledwisdom1.CallBack" />
+            type="com.kimascend.light.CallBack" />
 
         <variable
             name="content"

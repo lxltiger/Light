@@ -5,20 +5,20 @@
 
     <data>
 
-        <import type="com.example.ledwisdom1.view.ImageTransformationType" />
+        <import type="com.kimascend.light.view.ImageTransformationType" />
 
         <variable
             name="viewModel"
-            type="com.example.ledwisdom1.home.HomeViewModel" />
+            type="com.kimascend.light.home.HomeViewModel" />
 
         <variable
             name="handler"
-            type="com.example.ledwisdom1.home.HomeFragment" />
+            type="com.kimascend.light.home.HomeFragment" />
 
 
         <variable
             name="mesh"
-            type="com.example.ledwisdom1.mesh.DefaultMesh" />
+            type="com.kimascend.light.mesh.DefaultMesh" />
 
         <variable
             name="showScene"

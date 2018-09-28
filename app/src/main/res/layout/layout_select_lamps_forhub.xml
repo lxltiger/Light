@@ -9,7 +9,7 @@
 
         <variable
             name="handler"
-            type="com.example.ledwisdom1.device.AddHubFragment" />
+            type="com.kimascend.light.device.AddHubFragment" />
 
     </data>
 

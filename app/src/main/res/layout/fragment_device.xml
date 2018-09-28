@@ -5,12 +5,12 @@
 
     <data>
 
-        <import type="com.example.ledwisdom1.api.Status" />
+        <import type="com.kimascend.light.api.Status" />
 
 
         <variable
             name="resource"
-            type="com.example.ledwisdom1.api.Resource" />
+            type="com.kimascend.light.api.Resource" />
 
     </data>
 
@@ -59,7 +59,7 @@
                 android:text="网关" />
         </RadioGroup>
 
-        <com.example.ledwisdom1.view.CustomViewPager
+        <com.kimascend.light.view.CustomViewPager
             android:id="@+id/viewPager"
             android:layout_width="0dp"
             android:layout_height="0dp"

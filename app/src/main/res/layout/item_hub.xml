@@ -7,11 +7,11 @@
 
         <variable
             name="hub"
-            type="com.example.ledwisdom1.home.entity.Hub" />
+            type="com.kimascend.light.home.entity.Hub" />
 
         <variable
             name="handler"
-            type="com.example.ledwisdom1.home.OnHandleHubListener" />
+            type="com.kimascend.light.home.OnHandleHubListener" />
     </data>
 
     <com.mcxtzhang.swipemenulib.SwipeMenuLayout

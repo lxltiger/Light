@@ -7,11 +7,11 @@
 
         <variable
             name="light"
-            type="com.example.ledwisdom1.model.Light" />
+            type="com.kimascend.light.model.Light" />
 
         <variable
             name="handler"
-            type="com.example.ledwisdom1.device.OnHandleNewLightListener" />
+            type="com.kimascend.light.device.OnHandleNewLightListener" />
     </data>
 
     <RelativeLayout

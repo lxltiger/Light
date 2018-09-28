@@ -5,15 +5,15 @@
 
     <data>
 
-        <import type="com.example.ledwisdom1.user.UserActivity" />
+        <import type="com.kimascend.light.user.UserActivity" />
 
         <variable
             name="handler"
-            type="com.example.ledwisdom1.CallBack" />
+            type="com.kimascend.light.CallBack" />
 
         <variable
             name="viewModel"
-            type="com.example.ledwisdom1.user.UserViewModel" />
+            type="com.kimascend.light.user.UserViewModel" />
 
     </data>
 

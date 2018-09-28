@@ -6,7 +6,7 @@
 
         <variable
             name="handler"
-            type="com.example.ledwisdom1.CallBack" />
+            type="com.kimascend.light.CallBack" />
 
         <variable
             name="progress"
@@ -18,7 +18,7 @@
 
         <variable
             name="lamp"
-            type="com.example.ledwisdom1.device.entity.Lamp" />
+            type="com.kimascend.light.device.entity.Lamp" />
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -99,7 +99,7 @@
 
         </RadioGroup>
 
-        <com.example.ledwisdom1.view.RGBView
+        <com.kimascend.light.view.RGBView
             android:id="@+id/iv_rgb"
             android:layout_width="match_parent"
             android:layout_height="196dp"

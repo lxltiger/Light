@@ -8,19 +8,19 @@
 
     <data>
 
-        <import type="com.example.ledwisdom1.api.Status" />
+        <import type="com.kimascend.light.api.Status" />
 
         <variable
             name="resource"
-            type="com.example.ledwisdom1.api.Resource" />
+            type="com.kimascend.light.api.Resource" />
 
         <variable
             name="handler"
-            type="com.example.ledwisdom1.CallBack" />
+            type="com.kimascend.light.CallBack" />
 
         <variable
             name="reportMesh"
-            type="com.example.ledwisdom1.mesh.ReportMesh" />
+            type="com.kimascend.light.mesh.ReportMesh" />
 
 
     </data>

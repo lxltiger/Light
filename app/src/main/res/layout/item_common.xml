@@ -6,11 +6,11 @@
     <data>
        <variable
            name="item"
-           type="com.example.ledwisdom1.model.CommonItem"/>
+           type="com.kimascend.light.model.CommonItem"/>
 
         <variable
             name="callBack"
-            type="com.example.ledwisdom1.CommonItemClickListener" />
+            type="com.kimascend.light.CommonItemClickListener" />
     </data>
 
 

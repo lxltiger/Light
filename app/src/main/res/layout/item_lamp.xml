@@ -8,11 +8,11 @@
 
         <variable
             name="lamp"
-            type="com.example.ledwisdom1.device.entity.Lamp" />
+            type="com.kimascend.light.device.entity.Lamp" />
 
         <variable
             name="handler"
-            type="com.example.ledwisdom1.home.OnHandleLampListener" />
+            type="com.kimascend.light.home.OnHandleLampListener" />
 
 
 
