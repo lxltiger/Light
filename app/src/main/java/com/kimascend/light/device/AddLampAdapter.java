@@ -11,6 +11,9 @@ import com.kimascend.light.common.DataBoundAdapter;
 import com.kimascend.light.databinding.ItemLightAddBinding;
 import com.kimascend.light.model.Light;
 
+import java.util.List;
+import java.util.Objects;
+
 /**
  * 扫描Mesh下蓝牙灯具的列表适配器
  */
@@ -24,10 +27,10 @@ public class AddLampAdapter extends DataBoundAdapter<Light,ItemLightAddBinding> 
     }
 
 
-    public void addLight(Light light) {
-        add(light);
-    }
 
+    public void set(List<Light> lights) {
+        super.set(lights);
+    }
 
     @Override
     protected void clear() {
@@ -42,18 +45,20 @@ public class AddLampAdapter extends DataBoundAdapter<Light,ItemLightAddBinding> 
      */
     public Light getLightByMAC(String mac) {
         if(TextUtils.isEmpty(mac)) return null;
-        return get(light -> mac.endsWith(light.raw.macAddress));
+        return get(light -> mac.endsWith(light.getDeviceInfo().macAddress));
 
     }
 
     @Override
     protected boolean areContentsTheSame(Light oldItem, Light newItem) {
-        return false;
+        return Objects.equals(oldItem.getDeviceInfo().macAddress,newItem.getDeviceInfo().macAddress)&&
+                oldItem.getDeviceInfo().meshAddress==newItem.getDeviceInfo().meshAddress&&
+                oldItem.getStatus()==newItem.getStatus();
     }
 
     @Override
     protected boolean areItemsTheSame(Light oldItem, Light newItem) {
-        return false;
+        return Objects.equals(oldItem.getDeviceInfo().macAddress,newItem.getDeviceInfo().macAddress);
     }
 
     @Override

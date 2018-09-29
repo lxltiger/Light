@@ -7,28 +7,21 @@ import com.telink.bluetooth.light.DeviceInfo;
 
 public final class Light {
 
-//    public String name;
-//    public String macAddress;
-//    public int meshAddress;
-    public int brightness;
-    public int color;
-    public int temperature;
-    public DeviceInfo raw;
-    /**
-     * 灯的类型 4-灯 6 插座 9 面板
-     */
-    public int type;
-    public Light() { }
+
+    private DeviceInfo deviceInfo;
+
+    public Light() {
+    }
 
     public Light(DeviceInfo raw) {
-        this.raw = raw;
+        this.deviceInfo = raw;
     }
 
     /**
      * 灯具描述
      * 描述根据场景不同所使用的自断不同
      */
-    public String mDescription="";
+    private String description = "";
     /**
      * 新灯条码中添加按钮的状态
      * 0-添加
@@ -36,13 +29,41 @@ public final class Light {
      * 2-添加成功
      * 当这个可观察的值发生变化时 会在绑定的方法中重新设置icon的图标
      */
-    public ObservableInt status = new ObservableInt(BindingAdapters.ADD);
+    private ObservableInt status = new ObservableInt(BindingAdapters.ADD);
 
+    public DeviceInfo getDeviceInfo() {
+        return deviceInfo;
+    }
+
+    public void setDeviceInfo(DeviceInfo deviceInfo) {
+        this.deviceInfo = deviceInfo;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getStatus() {
+        return status.get();
+    }
+
+    public void setStatus(int status) {
+        this.status.set(status);
+    }
+
+    public boolean unModified() {
+        return getStatus()==BindingAdapters.ADD;
+    }
 
     @Override
     public String toString() {
         return "Light{" +
-                ", brightness=" + brightness +
+                ", macAddress=" + deviceInfo.macAddress +
+                ", meshAddress=" + deviceInfo.meshAddress +
                 ", status=" + status.get() +
                 '}';
     }

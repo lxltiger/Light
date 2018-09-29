@@ -61,7 +61,7 @@ public class LightSettingFragment extends Fragment  {
         DeviceControlViewModel.Factory factory = new DeviceControlViewModel.Factory(lamp.getDevice_id(),lamp.getBrightness());
         DeviceControlViewModel viewModel = ViewModelProviders.of(this, factory).get(DeviceControlViewModel.class);
 //        使用Life observer监听页面的生命周期 并交给view model处理
-        MeshEventManager.bindEventListener(this, viewModel.eventListener, SmartLightApp.INSTANCE());
+        MeshEventManager.bindListenerForLightSetting(this, viewModel.eventListener, SmartLightApp.INSTANCE());
 //        逻辑都在view model
         binding.setViewModel(viewModel);
         binding.ivRgb.setOnColorChangedListenner(viewModel::onColorChanged);

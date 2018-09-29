@@ -39,7 +39,7 @@ import java.util.List;
 
 
 /**
- * 设备页面 包含灯具
+ * 设备页面
  */
 
 public class DeviceFragment extends Fragment {

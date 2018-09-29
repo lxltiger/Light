@@ -19,7 +19,7 @@ import com.kimascend.light.model.RequestResult;
 import com.kimascend.light.repository.HomeRepository;
 
 import java.util.Map;
-
+@Deprecated
 public class DeviceViewModel extends AndroidViewModel {
     private static final String TAG = "DeviceViewModel";
     private HomeRepository repository;
@@ -37,9 +37,6 @@ public class DeviceViewModel extends AndroidViewModel {
     //    添加Hub请求
     public final MutableLiveData<AddHubRequest> addHubRequest = new MutableLiveData<>();
     public final LiveData<ApiResponse<RequestResult>> addHubObserver;
-
-    // 获取灯具mesh address
-    public final MediatorLiveData<Light> lampMeshAddressObserver=new MediatorLiveData<>();
 
 
 

@@ -100,6 +100,20 @@ public abstract class DataBoundAdapter<T,V extends ViewDataBinding> extends Recy
         notifyItemChanged(getItemCount() - 1);
     }
 
+    protected void set(List<T> update) {
+        if (update == null) {
+            if (items == null) {
+                return;
+            }
+            int size=items.size();
+            notifyItemRangeChanged(0, size);
+            items=null;
+        }else{
+            items=update;
+            notifyDataSetChanged();
+        }
+
+    }
 
     protected T get(Predicate<T> predicate) {
         if (items != null) {

@@ -4,6 +4,7 @@ package com.kimascend.light;
 /**
  * 应用的配置信息
  */
+@Deprecated
 public interface Config {
 
     String IMG_PREFIX = "http://192.168.1.33/img";

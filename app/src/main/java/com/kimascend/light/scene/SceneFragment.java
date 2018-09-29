@@ -102,7 +102,7 @@ public class SceneFragment extends Fragment implements CallBack, ProduceAvatarFr
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        MeshEventManager.bindEventListener(this,eventListener , SmartLightApp.INSTANCE());
+//        MeshEventManager.bindListenerForLightSetting(this,eventListener , SmartLightApp.INSTANCE());
         Scene scene = getArguments().getParcelable("scene");
         if (scene != null && !TextUtils.isEmpty(scene.getId())) {
             sceneRequest.isAdd = false;

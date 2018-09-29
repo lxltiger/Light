@@ -25,8 +25,8 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="8dp"
-            app:deviceIcon="@{light.type}"
-            tools:background="@drawable/icon_light" />
+            android:background="@drawable/icon_light"
+             />
 
         <!--根据mStatus在BindingAdapter中设置图片-->
         <ImageView
@@ -36,8 +36,9 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="8dp"
+            android:clickable="@{light.unModified()}"
             android:onClick="@{()->handler.accept(light)}"
-            app:icon="@{light.status}"
+            app:icon="@{light.getStatus()}"
             tools:background="@drawable/icon_add" />
 
         <TextView
@@ -51,7 +52,7 @@
             android:lines="2"
             android:paddingEnd="8dp"
             android:paddingStart="8dp"
-            android:text='@{light.mDescription}'
+            android:text='@{light.getDescription()}'
             tools:text="hei\nzhng" />
         <View
             android:layout_width="match_parent"

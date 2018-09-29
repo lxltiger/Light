@@ -110,6 +110,8 @@
     <string name="wifi_setting">WIFI设置</string>
     <string name="select_bluetooth_hub">选择蓝牙网路</string>
     <string name="toast_result_sceneaddlamp">添加失败，请检查网络</string>
+    <string name="fail_to_add_lamp">灯具添加失败</string>
+    <string name="is_adding">正在添加</string>
     <string name="title_amend_scene">修改场景</string>
     <string name="register_name_digits">._0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLIMNOPQRSTUVWXYZ</string>
     <string name="toast_imgcode">请输入验证码</string>
@@ -213,6 +215,7 @@
     <string name="add_hub">添加蓝牙网络</string>
     <string name="add_scene">添加场景</string>
     <string name="name">名称</string>
+    <string name="mesh_offline">设备离线</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
