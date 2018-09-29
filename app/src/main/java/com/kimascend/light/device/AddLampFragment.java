@@ -11,6 +11,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,9 +37,6 @@ import com.telink.bluetooth.light.Parameters;
 import com.telink.util.Event;
 import com.telink.util.EventListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static com.kimascend.light.common.BindingAdapters.ADD;
 import static com.kimascend.light.common.BindingAdapters.ADDED;
 import static com.kimascend.light.utils.ToastUtil.showToast;
@@ -60,8 +59,7 @@ public class AddLampFragment extends Fragment implements EventListener<String> {
     /**
      * 是否扫描 一进来就扫描 所以默认为true  也是停止扫描的标记
      */
-    private boolean isScan = true;
-    private FragmentAddLampBinding binding;
+    private boolean scanning = true;
 
     /**
      * 新设备适配器
@@ -87,8 +85,42 @@ public class AddLampFragment extends Fragment implements EventListener<String> {
 
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.d(TAG, "onCreateOptionsMenu: ");
+        inflater.inflate(R.menu.fragment_add_lamp, menu);
+        if (!scanning) {
+            menu.findItem(R.id.menu_stop).setVisible(false);
+            menu.findItem(R.id.menu_scan).setVisible(true);
+            menu.findItem(R.id.menu_refresh).setActionView(null);
+        } else {
+            menu.findItem(R.id.menu_stop).setVisible(true);
+            menu.findItem(R.id.menu_scan).setVisible(false);
+            menu.findItem(R.id.menu_refresh).setActionView(R.layout.actionbar_indeterminate_progress);
+        }
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG, "onOptionsItemSelected: ");
+        switch (item.getItemId()) {
+            case R.id.menu_scan:
+                // 清空设备列表
+                lampAdapter.clear();
+                scanLeDevice(true);
+                break;
+            case R.id.menu_stop:
+                scanLeDevice(false);
+                break;
+        }
+        getActivity().invalidateOptionsMenu();
+        return true;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         deviceType.put(Config.LAMP_RGB, Config.LAMP_TYPE);
         deviceType.put(Config.LAMP, Config.LAMP_TYPE);
         deviceType.put(Config.SOCKET, Config.SOCKET_TYPE);
@@ -113,69 +145,64 @@ public class AddLampFragment extends Fragment implements EventListener<String> {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_lamp, container, false);
-        binding.toolbar.toolbar.setNavigationOnClickListener((v -> getActivity().finish()));
-        binding.toolbar.toolbar.inflateMenu(R.menu.fragment_add_lamp);
-        binding.toolbar.toolbar.setOnMenuItemClickListener(this::onMenuItemClick);
+        FragmentAddLampBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_lamp, container, false);
         lampAdapter = new AddLampAdapter(this::addLamp);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.recyclerView.setAdapter(lampAdapter);
         return binding.getRoot();
     }
 
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        isScan = true;
-        startScan(100);
-        binding.setIsScanning(true);
-        handler.postDelayed(mStopScan, SCANNING_SPAN);
         viewModel = ViewModelProviders.of(this).get(DeviceViewModel.class);
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        scanLeDevice(true);
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        scanLeDevice(false);
+        lampAdapter.clear();
+
+    }
+
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         SmartLightApp smartLightApp = SmartLightApp.INSTANCE();
         smartLightApp.removeEventListener(this);
-        handler.removeCallbacksAndMessages(null);
     }
 
     /**
      * 开始扫描
      * 名称为出厂名 kimascend
      *
-     * @param delay
+     * @param
      */
-    private void startScan(int delay) {
-        Log.d(TAG, "startScan: " + isScan);
-        if (isScan) {
-            handler.postDelayed(() -> {
-                //扫描参数
-                LeScanParameters params = LeScanParameters.create();
-                params.setMeshName(Config.FACTORY_NAME);
-                params.setOutOfMeshName("kick");
-                params.setTimeoutSeconds(15);
-                params.setScanMode(false);
-                TelinkLightService.Instance().startScan(params);
-
-            }, delay);
+    private void scanLeDevice(boolean scan) {
+        scanning = scan;
+        if (scan) {
+            LeScanParameters params = LeScanParameters.create();
+            params.setMeshName(Config.FACTORY_NAME);
+            params.setOutOfMeshName("kick");
+            params.setTimeoutSeconds(15);
+            params.setScanMode(false);
+            TelinkLightService.Instance().startScan(params);
+            handler.postDelayed(() -> scanLeDevice(false), SCANNING_SPAN);
+        } else {
+            handler.removeCallbacksAndMessages(null);
+            TelinkLightService.Instance().idleMode(true);
         }
     }
-
-
-    /**
-     * 停止扫描
-     */
-    Runnable mStopScan = new Runnable() {
-        @Override
-        public void run() {
-            Log.d(TAG, "run: stop scan");
-            isScan = false;
-            TelinkLightService.Instance().idleMode(true);
-            binding.setIsScanning(false);
-        }
-    };
 
 
     @Override
@@ -186,9 +213,9 @@ public class AddLampFragment extends Fragment implements EventListener<String> {
                 onLeScan((LeScanEvent) event);
                 break;
             case LeScanEvent.LE_SCAN_TIMEOUT:
-                isScan = false;
+                scanning = false;
                 TelinkLightService.Instance().idleMode(true);
-                binding.setIsScanning(false);
+//                binding.setIsScanning(false);
                 break;
             case DeviceEvent.STATUS_CHANGED:
                 onDeviceStatusChanged((DeviceEvent) event);
@@ -291,27 +318,5 @@ public class AddLampFragment extends Fragment implements EventListener<String> {
         }
     }
 
-    public boolean onMenuItemClick(MenuItem item) {
-        refresh();
-        return true;
-    }
-
-    /**
-     * 刷新当前设备
-     */
-    private void refresh() {
-        Log.d(TAG, "重新扫描");
-//        暂停当前扫描 有可能还在扫描当中
-        TelinkLightService.Instance().idleMode(true);
-//        清空设备列表
-        lampAdapter.clear();
-//        显示扫描等待框
-        binding.setIsScanning(true);
-        isScan = true;
-//        开始扫描
-        startScan(100);
-//        30秒后停止
-        handler.postDelayed(mStopScan, SCANNING_SPAN);
-    }
 
 }

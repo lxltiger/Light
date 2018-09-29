@@ -5,21 +5,12 @@
     <data>
 
 
-        <variable
-            name="isScanning"
-            type="boolean" />
-
     </data>
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <include
-            android:id="@+id/toolbar"
-            layout="@layout/layout_title_bar"
-            app:navIcon="@{@drawable/ic_back_36dp}"
-            app:title="@{@string/title_add_light}" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
@@ -29,17 +20,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <ProgressBar
-            android:id="@+id/pb_scanning"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:visibleGone="@{isScanning}" />
 
     </android.support.constraint.ConstraintLayout>
 

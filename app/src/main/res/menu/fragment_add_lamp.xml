@@ -2,11 +2,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_add"
-        android:title="@string/ra_refresh"
-        android:icon="@drawable/ic_refresh"
-        app:showAsAction="always" />
-
+        android:id="@+id/menu_refresh"
+        android:checkable="false"
+        android:orderInCategory="1"
+        android:title=""
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_scan"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom|withText"
+        android:title="扫描" />
+    <item
+        android:id="@+id/menu_stop"
+        android:orderInCategory="101"
+        app:showAsAction="ifRoom|withText"
+        android:title="停止" />
 
 
 </menu>
