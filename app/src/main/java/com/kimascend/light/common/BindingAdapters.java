@@ -132,16 +132,12 @@ public class BindingAdapters {
     @android.databinding.BindingAdapter("deviceStatus")
     public static void setDeviceStatus(SwitchCompat view, int brightness) {
         if (brightness > 0) {
-//            view.setEnabled(true);
             view.setChecked(true);
         } else if (brightness == 0) {
-//            view.setEnabled(true);
             view.setChecked(false);
         } else {
             view.setChecked(false);
-//            view.setEnabled(false);
         }
-
     }
 
 

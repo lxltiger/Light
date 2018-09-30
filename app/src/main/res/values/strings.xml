@@ -249,6 +249,7 @@
     <string name="switch_wifi">WIFI</string>
     <string name="setting">已设置</string>
     <string name="unsettting">未设置</string>
+    <string name="succeed_to_connect">连接成功</string>
 
 
 </resources>
