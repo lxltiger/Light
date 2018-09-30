@@ -1036,12 +1036,10 @@ public class HomeRepository {
 
 
     /**
-     * @param typeId 没有使用，请求的是所有类型的灯具
      * @return
      */
-    public LiveData<Resource<List<Lamp>>> getDeviceList(int typeId) {
+    public LiveData<Resource<List<Lamp>>> getDeviceList() {
         MediatorLiveData<Resource<List<Lamp>>> result = new MediatorLiveData<>();
-        result.setValue(Resource.loading(null));
         String meshId = getMeshId();
         LiveData<List<Lamp>> local = lampDao.loadDevices(meshId);
         result.addSource(local, lamps -> result.setValue(Resource.success(lamps, "")));
@@ -1648,5 +1646,9 @@ public class HomeRepository {
 
     public void insertDevice(Lamp lamp) {
         lampDao.insertDevice(lamp);
+    }
+
+    public void deleteDeviceFromLocal(Lamp lamp) {
+        lampDao.deleteLampById(lamp.getId());
     }
 }

@@ -5,6 +5,9 @@
 
     <data>
 
+        <variable
+            name="title"
+            type="String" />
     </data>
 
     <RelativeLayout
@@ -13,45 +16,64 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context=".home.HomeActivity">
 
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ToolbarTheme">
 
-         <RadioGroup
-             android:id="@+id/rg_main_group"
-             android:layout_width="match_parent"
-             android:layout_height="48dp"
-             android:layout_alignParentBottom="true"
-             android:background="@drawable/bg_title"
-             android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@{title}"
+                android:textColor="@android:color/white"
+                android:textSize="20sp" />
 
-             <RadioButton
-                 android:id="@+id/rb_device"
-                 style="@style/main_radioButton"
-                 android:checked="true"
-                 android:drawableTop="@drawable/selector_radio_button_hub"
-                 android:text="@string/title_main_device" />
+        </android.support.v7.widget.Toolbar>
 
-             <RadioButton
-                 android:id="@+id/rb_group"
-                 style="@style/main_radioButton"
-                 android:drawableTop="@drawable/selector_radio_button_scene"
-                 android:text="@string/title_main_scene" />
-             <RadioButton
-                 android:id="@+id/rb_scene"
-                 style="@style/main_radioButton"
-                 android:drawableTop="@drawable/selector_radio_button_light"
-                 android:text="@string/scene" />
-             <RadioButton
-                 android:id="@+id/rb_alarm"
-                 style="@style/main_radioButton"
-                 android:drawableTop="@drawable/selector_radio_button_more"
-                 android:text="@string/alarm" />
+        <RadioGroup
+            android:id="@+id/rg_main_group"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/bg_title"
+            android:orientation="horizontal">
 
-         </RadioGroup>
+            <RadioButton
+                android:id="@+id/rb_device"
+                style="@style/main_radioButton"
+                android:checked="true"
+                android:drawableTop="@drawable/selector_radio_button_hub"
+                android:text="@string/title_main_device" />
+
+            <RadioButton
+                android:id="@+id/rb_group"
+                style="@style/main_radioButton"
+                android:drawableTop="@drawable/selector_radio_button_scene"
+                android:text="@string/title_main_group" />
+
+            <RadioButton
+                android:id="@+id/rb_scene"
+                style="@style/main_radioButton"
+                android:drawableTop="@drawable/selector_radio_button_light"
+                android:text="@string/title_main_scene" />
+
+            <RadioButton
+                android:id="@+id/rb_alarm"
+                style="@style/main_radioButton"
+                android:drawableTop="@drawable/selector_radio_button_more"
+                android:text="@string/title_main_alarm" />
+
+        </RadioGroup>
 
         <FrameLayout
             android:id="@+id/fl_main_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/rg_main_group" />
+            android:layout_above="@+id/rg_main_group"
+            android:layout_below="@+id/toolbar" />
 
     </RelativeLayout>
 </layout>

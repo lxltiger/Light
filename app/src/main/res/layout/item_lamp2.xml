@@ -15,7 +15,6 @@
             type="com.kimascend.light.home.OnHandleLampListener" />
 
 
-
     </data>
 
     <com.mcxtzhang.swipemenulib.SwipeMenuLayout
@@ -27,7 +26,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:onClick="@{()->handler.onItemClick(lamp)}">
+            android:onClick="@{()->handler.onItemClick(lamp)}"
+            >
 
 
             <ImageView
@@ -36,30 +36,30 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="8dp"
-                app:deviceIcon="@{lamp.typeId}"
-                tools:background="@drawable/icon_light" />
+                android:background="@drawable/icon_light" />
 
-            <ImageView
+            <android.support.v7.widget.SwitchCompat
                 android:id="@+id/iv_status"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
+                android:clickable="false"
                 android:layout_marginEnd="8dp"
                 app:deviceStatus="@{lamp.brightness}"
-                tools:background="@drawable/bg_grey_circle" />
+                 />
 
             <TextView
                 android:id="@+id/tv_name_mac"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_toEndOf="@+id/iv_icon"
                 android:layout_toStartOf="@+id/iv_status"
+                android:layout_toEndOf="@+id/iv_icon"
                 android:gravity="center_vertical"
                 android:lineSpacingMultiplier="1.5"
                 android:lines="2"
-                android:paddingEnd="8dp"
                 android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:text='@{lamp.description}'
                 tools:text="hei\nzhng" />
 
@@ -69,16 +69,6 @@
 
 
         </RelativeLayout>
-
-        <Button
-            android:id="@+id/edit"
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            android:background="@color/colorAccent"
-            android:onClick="@{()->handler.onEditClick(lamp)}"
-            android:text="@string/title_main_compile"
-            android:textColor="@android:color/white" />
 
         <Button
             android:id="@+id/delete"

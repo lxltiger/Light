@@ -8,6 +8,7 @@ import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.ImageViewCompat;
+import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -54,20 +55,26 @@ public class BindingAdapters {
      */
     @android.databinding.BindingAdapter("icon")
     public static void setAddIcon(ImageView view, int status) {
+        boolean clickable=true;
         switch (status) {
             case ADD:
                 view.setImageDrawable(ContextCompat.getDrawable(view.getContext(), R.drawable.icon_add));
+                clickable=true;
                 break;
             case ADDING:
                 view.setImageDrawable(ContextCompat.getDrawable(view.getContext(), R.drawable.icon_refresh));
+                clickable=false;
                 break;
             case ADDED:
                 view.setImageDrawable(ContextCompat.getDrawable(view.getContext(), R.drawable.icon_add_ok));
+                clickable=false;
                 break;
             default:
                 view.setVisibility(View.GONE);
 
         }
+
+        view.setClickable(clickable);
     }
 
     @BindingAdapter(value = {"show", "msg"}, requireAll = false)
@@ -109,7 +116,7 @@ public class BindingAdapters {
     }
 
 
-    @android.databinding.BindingAdapter("deviceStatus")
+   /* @android.databinding.BindingAdapter("deviceStatus")
     public static void setDeviceStatus(ImageView view, int brightness) {
         if (brightness > 0) {
             view.setImageDrawable(ContextCompat.getDrawable(view.getContext(), R.drawable.bg_green_circle));
@@ -119,8 +126,25 @@ public class BindingAdapters {
             view.setImageDrawable(ContextCompat.getDrawable(view.getContext(), R.drawable.bg_grey_circle));
 
         }
+    }*/
+
+
+    @android.databinding.BindingAdapter("deviceStatus")
+    public static void setDeviceStatus(SwitchCompat view, int brightness) {
+        if (brightness > 0) {
+//            view.setEnabled(true);
+            view.setChecked(true);
+        } else if (brightness == 0) {
+//            view.setEnabled(true);
+            view.setChecked(false);
+        } else {
+            view.setChecked(false);
+//            view.setEnabled(false);
+        }
 
     }
+
+
 
     /**
      * @param view

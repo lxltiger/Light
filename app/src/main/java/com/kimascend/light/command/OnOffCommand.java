@@ -4,7 +4,7 @@ public abstract class OnOffCommand extends MeshStatus {
 
 
     private int addr;
-
+    public OnOffCommand(){}
     public OnOffCommand(int address) {
         this.addr = address;
     }
@@ -17,6 +17,16 @@ public abstract class OnOffCommand extends MeshStatus {
             }
         } else {
             executeOnOffByWIFI(on, addr, delay);
+        }
+    }
+
+    public final void onOff(boolean on, int addr) {
+        if (isBlueTooth()) {
+            if (isStatusValid()) {
+                executeOnOffByBLE(on, addr, 0);
+            }
+        } else {
+            executeOnOffByWIFI(on, addr, 0);
         }
     }
 

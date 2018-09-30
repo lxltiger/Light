@@ -29,7 +29,7 @@ public final class Light {
      * 2-添加成功
      * 当这个可观察的值发生变化时 会在绑定的方法中重新设置icon的图标
      */
-    private ObservableInt status = new ObservableInt(BindingAdapters.ADD);
+    public ObservableInt status = new ObservableInt(BindingAdapters.ADD);
 
     public DeviceInfo getDeviceInfo() {
         return deviceInfo;
@@ -47,17 +47,6 @@ public final class Light {
         this.description = description;
     }
 
-    public int getStatus() {
-        return status.get();
-    }
-
-    public void setStatus(int status) {
-        this.status.set(status);
-    }
-
-    public boolean unModified() {
-        return getStatus()==BindingAdapters.ADD;
-    }
 
     @Override
     public String toString() {

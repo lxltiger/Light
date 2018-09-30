@@ -53,7 +53,7 @@ public class AddLampAdapter extends DataBoundAdapter<Light,ItemLightAddBinding> 
     protected boolean areContentsTheSame(Light oldItem, Light newItem) {
         return Objects.equals(oldItem.getDeviceInfo().macAddress,newItem.getDeviceInfo().macAddress)&&
                 oldItem.getDeviceInfo().meshAddress==newItem.getDeviceInfo().meshAddress&&
-                oldItem.getStatus()==newItem.getStatus();
+                oldItem.status.get()==newItem.status.get();
     }
 
     @Override

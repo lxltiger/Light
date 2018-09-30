@@ -54,7 +54,7 @@ public class Lamp implements Parcelable {
     }
 
     public static Lamp from(Light light,String meshId) {
-        Lamp lamp = new Lamp(light.getDeviceInfo().meshAddress, light.getDeviceInfo().productUUID,  light.getDeviceInfo().deviceName, light.getDeviceInfo().macAddress, meshId);
+        Lamp lamp = new Lamp(light.getDeviceInfo().meshAddress, light.getDeviceInfo().productUUID,  light.getDeviceInfo().meshName, light.getDeviceInfo().macAddress, meshId);
         lamp.id = UUID.randomUUID().toString();
         return lamp;
     }

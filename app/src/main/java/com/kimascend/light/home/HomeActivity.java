@@ -1,7 +1,6 @@
 package com.kimascend.light.home;
 
 import android.app.AlertDialog;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
@@ -9,25 +8,22 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.kimascend.light.R;
-import com.kimascend.light.api.Resource;
-import com.kimascend.light.api.Status;
 import com.kimascend.light.app.SmartLightApp;
 import com.kimascend.light.common.NavigatorController;
+import com.kimascend.light.databinding.ContentMainBinding;
 import com.kimascend.light.mesh.DefaultMesh;
-import com.kimascend.light.mqtt.MQTTClient;
 import com.kimascend.light.sevice.TelinkLightService;
-import com.kimascend.light.user.Profile;
 import com.kimascend.light.utils.LightCommandUtils;
 import com.kimascend.light.utils.ToastUtil;
 import com.telink.bluetooth.LeBluetooth;
@@ -44,50 +40,43 @@ import com.telink.bluetooth.light.Parameters;
 import com.telink.util.Event;
 import com.telink.util.EventListener;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.List;
 
-import static com.kimascend.light.utils.ToastUtil.showToast;
-
 /**
  * 主页含4个UI
  */
-public class HomeActivity extends AppCompatActivity implements  EventListener<String> {
+public class HomeActivity extends AppCompatActivity implements EventListener<String> {
     private static final String TAG = HomeActivity.class.getSimpleName();
     private Handler handler = new Handler();
     private NavigatorController navigatorController;
     private HomeViewModel viewModel;
+    private ContentMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.content_main);
-        //底部选项按钮
-        RadioGroup rgMainRadioGroup = (RadioGroup) findViewById(R.id.rg_main_group);
-        rgMainRadioGroup.setOnCheckedChangeListener(this::onCheckedChanged);
+        binding = DataBindingUtil.setContentView(this, R.layout.content_main);
+        binding.rgMainGroup.setOnCheckedChangeListener(this::onCheckedChanged);
         navigatorController = new NavigatorController(this, R.id.fl_main_container);
         if (savedInstanceState == null) {
             navigatorController.navigateToDevice();
         }
+        setUpToolbar();
         SmartLightApp smartLightApp = SmartLightApp.INSTANCE();
         smartLightApp.doInit();
         viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
-
         addBlueToothStatusReceiver();
 
-        /*try {
-            MQTTClient.INSTANCE().startConnect();
-        } catch (IOException e) {
-            Log.d(TAG, "fail to start mqtt");
-            e.printStackTrace();
-        }*/
     }
 
 
-
-
+    private void setUpToolbar() {
+        setSupportActionBar(binding.toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        binding.setTitle(getString(R.string.title_main_device));
+    }
 
     private void addBlueToothStatusReceiver() {
         IntentFilter filter = new IntentFilter();
@@ -143,7 +132,6 @@ public class HomeActivity extends AppCompatActivity implements  EventListener<St
         unregisterReceiver(mBlueToothStatusReceiver);
         SmartLightApp.INSTANCE().doDestroy();
         handler.removeCallbacks(null);
-//        MQTTClient.INSTANCE().exit();
         super.onDestroy();
     }
 
@@ -190,20 +178,24 @@ public class HomeActivity extends AppCompatActivity implements  EventListener<St
         smartLightApp.removeEventListener(this);
     }
 
-//    @Override
+    //    @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
 
         switch (checkedId) {
             case R.id.rb_scene:
+                binding.setTitle(getString(R.string.title_main_scene));
                 navigatorController.navigateToSceneList();
                 break;
             case R.id.rb_device:
+                binding.setTitle(getString(R.string.title_main_device));
                 navigatorController.navigateToDevice();
                 break;
             case R.id.rb_group:
+                binding.setTitle(getString(R.string.title_main_group));
                 navigatorController.navigateToGroup();
                 break;
             case R.id.rb_alarm:
+                binding.setTitle(getString(R.string.title_main_alarm));
                 navigatorController.navigateToClockList();
                 break;
         }
@@ -266,7 +258,7 @@ public class HomeActivity extends AppCompatActivity implements  EventListener<St
                 }
                 SmartLightApp.INSTANCE().setMeshStatus(LightAdapter.STATUS_CONNECTING);
                 String meshName = mesh.name;
-                String psw =mesh.password;
+                String psw = mesh.password;
                 Log.d(TAG, meshName + "--" + psw);
                 LeAutoConnectParameters connectParams = Parameters.createAutoConnectParameters();
                 connectParams.setMeshName(meshName);
@@ -357,21 +349,5 @@ public class HomeActivity extends AppCompatActivity implements  EventListener<St
         }
     }
 
-    /*@Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult() called with: requestCode = [" + requestCode + "], resultCode = [" + resultCode + "], data = [" + data + "]");
-        if (resultCode != Activity.RESULT_OK) {
-            return;
-        }
-        switch (requestCode) {
-            case 0:
-                UserActivity.start(this,UserActivity.ACTION_LOGIN);
-                finish();
-                break;
-            case 10:
-                Log.d(TAG, "set requset");
-//                viewModel.sceneListRequest.setValue(1);
-                break;
-        }
-    }*/
+
 }

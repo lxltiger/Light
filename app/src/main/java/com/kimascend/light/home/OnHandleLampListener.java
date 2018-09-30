@@ -11,7 +11,6 @@ public interface OnHandleLampListener {
 
     void onItemClick(Lamp lamp);
 
-    void onEditClick(Lamp lamp);
 
     void onDeleteClick(Lamp lamp);
 }

@@ -105,10 +105,7 @@ public class LampListDialogFragment extends BottomSheetDialogFragment implements
             }
         }
 
-        @Override
-        public void onEditClick(Lamp lamp) {
 
-        }
 
         @Override
         public void onDeleteClick(Lamp lamp) {

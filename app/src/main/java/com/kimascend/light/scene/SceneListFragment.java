@@ -10,6 +10,9 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -26,7 +29,7 @@ import java.util.List;
  * 情景列表页面
  * 情景不仅能控制多个灯具 还能控制多个场景
  */
-public class SceneListFragment extends Fragment implements CallBack {
+public class SceneListFragment extends Fragment /*implements CallBack*/ {
     public static final String TAG = SceneListFragment.class.getSimpleName();
     private SceneAdapter sceneAdapter;
     private SceneViewModel viewModel;
@@ -43,12 +46,16 @@ public class SceneListFragment extends Fragment implements CallBack {
         fragment.setArguments(args);
         return fragment;
     }
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_scene_list, container, false);
-        binding.setHandler(this);
         binding.scenes.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         sceneAdapter = new SceneAdapter(mHandleSceneListener);
         binding.scenes.setAdapter(sceneAdapter);
@@ -102,7 +109,23 @@ public class SceneListFragment extends Fragment implements CallBack {
         });
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.icon_add, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add:
+                GroupSceneActivity.start(getContext(), GroupSceneActivity.ACTION_SCENE, null);
+
+                return true;
+        }
+
+        return false;
+    }
     @Override
     public void onPause() {
         super.onPause();
@@ -122,17 +145,4 @@ public class SceneListFragment extends Fragment implements CallBack {
         viewModel.sceneListRequest.setValue(1);
     }
 
-
-    @Override
-    public void handleClick(View view) {
-        switch (view.getId()) {
-            case R.id.iv_back:
-                getActivity().finish();
-                break;
-            case R.id.btn_add:
-                GroupSceneActivity.start(getContext(), GroupSceneActivity.ACTION_SCENE, null);
-                break;
-
-        }
-    }
 }

@@ -36,7 +36,7 @@ public class HomeViewModel extends AndroidViewModel {
 
 
 
-    public MutableLiveData<Integer> deviceListRequest = new MutableLiveData<>();
+//    public MutableLiveData<Integer> deviceListRequest = new MutableLiveData<>();
     public final LiveData<Resource<List<Lamp>>> deviceListObserver;
 
 
@@ -75,7 +75,7 @@ public class HomeViewModel extends AndroidViewModel {
         shareMeshObserver = Transformations.switchMap(shareMeshRequest, repository::shareMesh);
 
 
-        deviceListObserver = Transformations.switchMap(deviceListRequest, input -> repository.getDeviceList(input));
+        deviceListObserver =  repository.getDeviceList();
 
         hubListObserver = Transformations.switchMap(hubListRequest, input -> repository.getHubList(input));
 

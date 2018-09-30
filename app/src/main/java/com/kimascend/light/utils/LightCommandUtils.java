@@ -20,19 +20,6 @@ import static com.telink.bluetooth.light.Opcode.BLE_GATT_OP_CTRL_EF;
 public class LightCommandUtils {
     private static final String TAG = "LightCommandUtils";
 
-    public static void setBrightness(int brightness, int addr) {
-        boolean blueTooth = SmartLightApp.INSTANCE().isBlueTooth();
-        if (blueTooth) {
-//            byte[] params = new byte[]{(byte) brightness};
-            if (isStatusValid()) {
-                TelinkLightService.Instance().sendCommandNoResponse(Opcode.BLE_GATT_OP_CTRL_D2.getValue(), addr, new byte[]{(byte) brightness});
-            }
-        } else {
-            LampCmd lampCmd = new LampCmd(5, addr, 1, "0", brightness);
-            String message = new Gson().toJson(lampCmd);
-            MQTTClient.INSTANCE().publishLampControlMessage("1102F483CD9E6123", message);
-        }
-    }
 
     /**
      * 检验状态是否有效
@@ -62,32 +49,6 @@ public class LightCommandUtils {
 
     }
 
-
-    public static void toggleLamp(int addr, boolean on) {
-        boolean blueTooth = SmartLightApp.INSTANCE().isBlueTooth();
-        if (blueTooth) {
-            if (isStatusValid()) {
-                TelinkLightService.Instance().sendCommandNoResponse(Opcode.BLE_GATT_OP_CTRL_D0.getValue(), addr, new byte[]{(byte) (on ? 0x01 : 0x00), 0x00, 0x00});
-            }
-        } else {
-            LampCmd lampCmd = new LampCmd(5, addr, 1, "0", on ? 100 : 0);
-            String message = new Gson().toJson(lampCmd);
-            MQTTClient.INSTANCE().publishLampControlMessage("1102F483CD9E6123", message);
-        }
-    }
-
-    public static void toggleLampWithDelay(int addr, boolean on) {
-        boolean blueTooth = SmartLightApp.INSTANCE().isBlueTooth();
-        if (blueTooth) {
-            if (isStatusValid()) {
-                TelinkLightService.Instance().sendCommandNoResponse(Opcode.BLE_GATT_OP_CTRL_D0.getValue(), addr, new byte[]{(byte) (on ? 0x01 : 0x00), (byte) 0x88, 0x13});
-            }
-        } else {
-            LampCmd lampCmd = new LampCmd(5, addr, 1, "0", on ? 100 : 0);
-            String message = new Gson().toJson(lampCmd);
-            MQTTClient.INSTANCE().publishLampControlMessage("1102F483CD9E6123", message);
-        }
-    }
 
 
     //获取灯具的时间
@@ -160,45 +121,6 @@ public class LightCommandUtils {
         TelinkLightService.Instance().sendCommand(opcode, dstAddress, params);
     }
 
-
-    /**
-     * @param sceneAddress 情景编号
-     * @param dstAddress   灯具deviceId
-     * @param light        亮度  0-100
-     */
-    public static void addDeviceToScene(int sceneAddress, int dstAddress, int light, int red, int green, int blue) {
-        Log.d(TAG, "addDeviceToScene() called with: sceneAddress = [" + sceneAddress + "], dstAddress = [" + dstAddress + "], light = [" + light + "]");
-        byte[] params = new byte[]{0x01, (byte) (sceneAddress & 0xFF), (byte) light, (byte) red, (byte) green, (byte) blue};
-        TelinkLightService.Instance().sendCommand(BLE_GATT_OP_CTRL_EE.getValue(), dstAddress, params);
-    }
-
-    /**
-     * @param sceneAddress
-     * @param dstAddress   deviceId 删除某个灯  0xffff所有灯   0x0000当前直连的灯
-     */
-    public static void deleteDeviceFromScene(int sceneAddress, int dstAddress) {
-        Log.d(TAG, "deleteDeviceFromScene() called with: sceneAddress = [" + sceneAddress + "], dstAddress = [" + dstAddress + "]");
-        byte[] params = new byte[]{0x00, (byte) (sceneAddress & 0xFF)};
-        TelinkLightService.Instance().sendCommand(BLE_GATT_OP_CTRL_EE.getValue(), dstAddress, params);
-    }
-
-    public static void deleteAllDevicesFromScene(int sceneAddress) {
-        deleteDeviceFromScene(sceneAddress, 0xffff);
-    }
-
-    //触发情景景
-    public static void loadScene(int sceneAddress) {
-        Log.d(TAG, "loadScene() called with: sceneAddress = [" + sceneAddress + "]");
-        boolean blueTooth = SmartLightApp.INSTANCE().isBlueTooth();
-        if (blueTooth) {
-            if (isStatusValid()) {
-                byte[] params = new byte[]{(byte) (sceneAddress & 0xFF)};
-                TelinkLightService.Instance().sendCommand(BLE_GATT_OP_CTRL_EF.getValue(), 0xffff, params);
-            }
-        } else {
-
-        }
-    }
 
 
 }

@@ -12,7 +12,7 @@ import com.kimascend.light.device.AddHubFragment;
 import com.kimascend.light.device.AddLampFragment;
 import com.kimascend.light.device.GroupControlFragment;
 import com.kimascend.light.device.LightSettingFragment;
-import com.kimascend.light.home.DeviceFragment;
+import com.kimascend.light.home.DeviceListFragment;
 import com.kimascend.light.home.GroupListFragment;
 import com.kimascend.light.home.HomeFragment;
 import com.kimascend.light.home.MoreFragment;
@@ -80,7 +80,7 @@ public class NavigatorController {
 
     public void navigateToDevice() {
         fm.beginTransaction()
-                .replace(container, DeviceFragment.newInstance(), DeviceFragment.TAG)
+                .replace(container, DeviceListFragment.newInstance(), DeviceListFragment.TAG)
                 .commitAllowingStateLoss();
     }
 

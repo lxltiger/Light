@@ -36,9 +36,8 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="8dp"
-            android:clickable="@{light.unModified()}"
             android:onClick="@{()->handler.accept(light)}"
-            app:icon="@{light.getStatus()}"
+            app:icon="@{light.status}"
             tools:background="@drawable/icon_add" />
 
         <TextView

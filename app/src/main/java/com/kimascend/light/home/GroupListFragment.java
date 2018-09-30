@@ -11,6 +11,8 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +21,12 @@ import com.kimascend.light.R;
 import com.kimascend.light.activity.LightSettingActivity;
 import com.kimascend.light.api.ApiResponse;
 import com.kimascend.light.databinding.FragmentGroupListBinding;
+import com.kimascend.light.device.DeviceActivity;
 import com.kimascend.light.home.entity.Group;
 import com.kimascend.light.home.entity.GroupList;
 import com.kimascend.light.model.LightSetting;
 import com.kimascend.light.scene.GroupSceneActivity;
+import com.kimascend.light.utils.ToastUtil;
 
 import java.util.List;
 
@@ -46,13 +50,16 @@ public class GroupListFragment extends Fragment /*implements CallBack*/{
         fragment.setArguments(args);
         return fragment;
     }
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_group_list, container, false);
-        mBinding.toolbar.toolbar.inflateMenu(R.menu.icon_add);
-        mBinding.toolbar.toolbar.setOnMenuItemClickListener(this::onMenuItemClick);
         mBinding.scenes.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         groupAdapter = new GroupAdapter(mHandleSceneListener);
         mBinding.scenes.setAdapter(groupAdapter);
@@ -109,6 +116,22 @@ public class GroupListFragment extends Fragment /*implements CallBack*/{
         });
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.icon_add, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add:
+                startActivity(GroupSceneActivity.newIntent(getActivity(), GroupSceneActivity.ACTION_GROUP, null));
+                return true;
+        }
+
+        return false;
+    }
     @Override
     public void onResume() {
         super.onResume();

@@ -23,11 +23,9 @@ import com.kimascend.light.utils.SnackbarUtils;
 
 /**
  * 扫面添加灯具页面
- * 扫描之前需要开启auto connect
- * 通过配置LeScanParameters 的scanMode（true）来逐个扫描自动修改mesh 或scanMode（false）扫描当前mesh所有设备来手动修改 ，我们使用后一种
- * <p>
- * 现在只扫描设备来显示 限制15秒时间 超过这个时间停止扫描至用户手动重扫
- * 扫描过程中用户可停止当前的扫描
+ *  note：选择在OnResume开始启动扫描  OnPause停止 是因为防止和HomeActivity的连接操作冲突，
+ *  即：这个页面finish时，会先执行HomeActivity的OnStart启动了连接，后执行此页面的OnStop，他们对蓝牙的操作是一个对象
+ *
  */
 public class AddLampFragment extends Fragment {
     public static final String TAG = AddLampFragment.class.getSimpleName();
@@ -81,8 +79,8 @@ public class AddLampFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         viewModel.scanLeDevice(true);
     }
 
@@ -119,8 +117,8 @@ public class AddLampFragment extends Fragment {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onPause() {
+        super.onPause();
         viewModel.scanLeDevice(false);
         lampAdapter.set(null);
     }

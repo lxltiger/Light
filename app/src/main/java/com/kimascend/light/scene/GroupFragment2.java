@@ -309,10 +309,7 @@ public class GroupFragment2 extends Fragment implements CallBack, ProduceAvatarF
             }
         }
 
-        @Override
-        public void onEditClick(Lamp lamp) {
 
-        }
 
         @Override
         public void onDeleteClick(Lamp lamp) {

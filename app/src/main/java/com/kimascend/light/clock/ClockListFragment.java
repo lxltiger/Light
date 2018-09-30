@@ -10,6 +10,9 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
@@ -18,6 +21,7 @@ import com.kimascend.light.CallBack;
 import com.kimascend.light.R;
 import com.kimascend.light.api.ApiResponse;
 import com.kimascend.light.databinding.FragmentClockListBinding;
+import com.kimascend.light.scene.GroupSceneActivity;
 import com.kimascend.light.utils.ToastUtil;
 
 import java.util.List;
@@ -25,7 +29,7 @@ import java.util.List;
 /**
  * 闹钟列表
  */
-public class ClockListFragment extends Fragment implements CallBack {
+public class ClockListFragment extends Fragment {
     public static final String TAG = ClockListFragment.class.getSimpleName();
     private ClockAdapter clockAdapter;
     private ClockViewModel viewModel;
@@ -33,6 +37,12 @@ public class ClockListFragment extends Fragment implements CallBack {
 
     public ClockListFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     public static ClockListFragment newInstance() {
@@ -46,7 +56,7 @@ public class ClockListFragment extends Fragment implements CallBack {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         FragmentClockListBinding mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_clock_list, container, false);
-        mBinding.setHandler(this);
+//        mBinding.setHandler(this);
         mBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         clockAdapter = new ClockAdapter(handleClockListener);
         mBinding.recyclerView.setAdapter(clockAdapter);
@@ -118,7 +128,23 @@ public class ClockListFragment extends Fragment implements CallBack {
         });
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.icon_add, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add:
+                ClockActivity.start(getContext(), ClockActivity.ACTION_CLOCK, null);
+
+                return true;
+        }
+
+        return false;
+    }
     @Override
     public void onResume() {
         super.onResume();
@@ -126,15 +152,4 @@ public class ClockListFragment extends Fragment implements CallBack {
     }
 
 
-    @Override
-    public void handleClick(View view) {
-        switch (view.getId()) {
-            case R.id.iv_back:
-                getActivity().finish();
-                break;
-            case R.id.btn_add:
-                ClockActivity.start(getContext(), ClockActivity.ACTION_CLOCK, null);
-                break;
-        }
-    }
 }

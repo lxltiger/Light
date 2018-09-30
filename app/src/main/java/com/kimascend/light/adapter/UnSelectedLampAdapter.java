@@ -87,10 +87,7 @@ public class UnSelectedLampAdapter extends RecyclerView.Adapter<UnSelectedLampAd
             }
         }
 
-        @Override
-        public void onEditClick(Lamp lamp) {
 
-        }
 
         @Override
         public void onDeleteClick(Lamp lamp) {

@@ -129,10 +129,7 @@ public class ClockFragment extends Fragment implements TimePickerFragment.Listen
             }
         }
 
-        @Override
-        public void onEditClick(Lamp lamp) {
 
-        }
 
         @Override
         public void onDeleteClick(Lamp lamp) {

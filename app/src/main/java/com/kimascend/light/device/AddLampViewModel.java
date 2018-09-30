@@ -36,6 +36,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static com.kimascend.light.common.BindingAdapters.ADD;
 import static com.kimascend.light.common.BindingAdapters.ADDED;
 
+/**
+ * 扫描之前需要开启auto connect
+ * 通过配置LeScanParameters 的scanMode（true）来逐个扫描自动修改mesh 或scanMode（false）扫描当前mesh所有设备来手动修改 ，我们使用后一种
+ * <p>
+ * 现在只扫描设备来显示 限制15秒时间 超过这个时间停止扫描至用户手动重扫
+ */
 public class AddLampViewModel extends AndroidViewModel {
     private static final String TAG = AddLampViewModel.class.getSimpleName();
     /**
@@ -98,7 +104,7 @@ public class AddLampViewModel extends AndroidViewModel {
             lightsObservable.setValue(lights);
             LeScanParameters params = LeScanParameters.create();
             params.setMeshName(Config.FACTORY_NAME);
-            params.setOutOfMeshName("kick");
+            params.setOutOfMeshName("out_of_mesh");
             params.setTimeoutSeconds(15);
             //连续扫描
             params.setScanMode(false);
@@ -113,7 +119,6 @@ public class AddLampViewModel extends AndroidViewModel {
 
     //蓝牙事件回调
     void callBack(Event<String> event) {
-        Log.d(TAG, "callBack() called with: event = [" + event.getType() + "]");
         switch (event.getType()) {
             case LeScanEvent.LE_SCAN:
                 onLeScan((LeScanEvent) event);
@@ -159,7 +164,7 @@ public class AddLampViewModel extends AndroidViewModel {
             case LightAdapter.STATUS_UPDATE_MESH_COMPLETED: {
                 Light light = getLightByMAC(deviceInfo.macAddress);
                 if (light != null) {
-                    light.setStatus(BindingAdapters.ADDED);
+                    light.status.set(BindingAdapters.ADDED);
                     light.getDeviceInfo().meshName = deviceInfo.meshName;
                     light.getDeviceInfo().deviceName = deviceInfo.deviceName;
                     DefaultMesh defaultMesh = SmartLightApp.INSTANCE().getDefaultMesh();
@@ -173,8 +178,8 @@ public class AddLampViewModel extends AndroidViewModel {
             case LightAdapter.STATUS_LOGOUT: {
                 Light light = getLightByMAC(deviceInfo.macAddress);
                 //如果A灯添加成功 下一次添加B灯时会收到A灯登出 更新失败的回调 防止状态被修改 判断是否已经修改成功
-                if (light != null && light.getStatus() != ADDED) {
-                    light.setStatus(ADD);
+                if (light != null && light.status.get() != ADDED) {
+                    light.status.set(ADD);
                     isAdding.set(false);
                 }
                 //已添加的设备是登出状态，meshName已改变，也会扫描到，在此排除
@@ -197,16 +202,16 @@ public class AddLampViewModel extends AndroidViewModel {
     }
 
     /**
-     * 添加灯具
+     * 添加灯具, 一次只能加一个
      * <p>
      * Light 的字段使用Observable 这样只要在这里修改值，相关UI会自动更新
      */
     void addLamp(Light light) {
-//            一次只能加一个
+        Log.d(TAG, "addLamp: ");
         if (isAdding.compareAndSet(false,true)) {
             //当前灯具的addr就是数据库总数加1
             light.getDeviceInfo().meshAddress = repository.getLampsNum() + 1;
-            light.setStatus(BindingAdapters.ADDING);
+            light.status.set(BindingAdapters.ADDING);
             LeUpdateParameters params = Parameters.createUpdateParameters();
             params.setOldMeshName(Config.FACTORY_NAME);
             params.setOldPassword(Config.FACTORY_PASSWORD);

@@ -70,15 +70,7 @@
 
         </RelativeLayout>
 
-        <Button
-            android:id="@+id/edit"
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            android:background="@color/colorAccent"
-            android:onClick="@{()->handler.onEditClick(lamp)}"
-            android:text="@string/title_main_compile"
-            android:textColor="@android:color/white" />
+
 
         <Button
             android:id="@+id/delete"

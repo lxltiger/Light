@@ -212,10 +212,7 @@ public class SceneFragment extends Fragment implements CallBack, ProduceAvatarFr
             }
         }
 
-        @Override
-        public void onEditClick(Lamp lamp) {
 
-        }
 
         @Override
         public void onDeleteClick(Lamp lamp) {
@@ -232,10 +229,7 @@ public class SceneFragment extends Fragment implements CallBack, ProduceAvatarFr
             LightSettingActivity.start(SceneFragment.this, lightSetting);
         }
 
-        @Override
-        public void onEditClick(Lamp lamp) {
 
-        }
 
         @Override
         public void onDeleteClick(Lamp lamp) {

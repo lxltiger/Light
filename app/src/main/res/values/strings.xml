@@ -54,8 +54,9 @@
     <!--mainActivity-->
     <string name="title_main_home">首页</string>
     <string name="title_main_device">设备</string>
-    <string name="title_main_scene">场景</string>
-    <string name="title_main_more">更多</string>
+    <string name="title_main_group">场景</string>
+    <string name="title_main_scene">情景</string>
+    <string name="title_main_alarm">闹钟</string>
 
     <string name="title_main_compile">编辑</string>
     <string name="title_main_gateway">网关</string>

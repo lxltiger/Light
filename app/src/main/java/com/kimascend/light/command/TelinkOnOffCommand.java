@@ -18,6 +18,8 @@ public class TelinkOnOffCommand extends OnOffCommand {
 
     }
 
+    public TelinkOnOffCommand(){}
+
     @Override
     protected void executeOnOffByBLE(boolean on, int addr,int delay) {
         byte low = (byte) (0xFF & delay);
