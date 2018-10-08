@@ -158,4 +158,13 @@ public class ExampleUnitTest {
     }
 
 
+    @Test
+    public void testString() {
+        String test = "";
+        String[] strings = test.split(",");
+        List<String> strings1 = Arrays.asList(strings);
+        System.out.println(strings1.size());
+    }
+
+
 }

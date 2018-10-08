@@ -31,6 +31,7 @@ import com.kimascend.light.database.UserDao;
 import com.kimascend.light.device.entity.AddHubRequest;
 import com.kimascend.light.device.entity.Lamp;
 import com.kimascend.light.device.entity.LampList;
+import com.kimascend.light.home.entity.Group;
 import com.kimascend.light.home.entity.GroupList;
 import com.kimascend.light.home.entity.Hub;
 import com.kimascend.light.home.entity.HubList;
@@ -55,6 +56,7 @@ import com.telink.bluetooth.light.OnlineStatusNotificationParser;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -1046,6 +1048,31 @@ public class HomeRepository {
 
         return result;
 
+    }
+
+    public LiveData<List<Lamp>> loadGroupDeviceList(Group group) {
+        MediatorLiveData<List<Lamp>> mediatorLiveData = new MediatorLiveData<>();
+        String meshId = getMeshId();
+        LiveData<List<Lamp>> local = lampDao.loadDevices(meshId);
+        mediatorLiveData.addSource(local, new Observer<List<Lamp>>() {
+            @Override
+            public void onChanged(List<Lamp> lamps) {
+                mediatorLiveData.removeSource(local);
+                List<String> deviceIds = Arrays.asList(group.getDeviceIds().split(","));
+                if (lamps != null) {
+                    for (Lamp lamp : lamps) {
+                        if (deviceIds.contains(String.valueOf(lamp.getDevice_id()))) {
+                            lamp.lampStatus.set(BindingAdapters.LIGHT_SELECTED);
+                        } else {
+                            lamp.lampStatus.set(BindingAdapters.LIGHT_HIDE);
+                        }
+                    }
+                }
+                mediatorLiveData.setValue(lamps);
+            }
+        });
+
+        return mediatorLiveData;
     }
 
 

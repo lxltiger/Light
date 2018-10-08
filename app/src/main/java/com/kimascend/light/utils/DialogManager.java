@@ -2,6 +2,7 @@ package com.kimascend.light.utils;
 
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -15,6 +16,10 @@ public class DialogManager {
 
     public DialogManager(@NonNull FragmentActivity activity) {
         mSupportFragmentManager = activity.getSupportFragmentManager();
+    }
+
+    public DialogManager(@NonNull Fragment fragment) {
+        mSupportFragmentManager = fragment.getChildFragmentManager();
     }
 
 

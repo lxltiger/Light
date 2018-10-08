@@ -15,9 +15,10 @@ public class Group implements Parcelable {
      */
 
     private int groupId;
-    private String name;
+    private String name="";
     private String icon;
     private String id;
+    private String deviceIds="";
 
     public boolean selected = false;
 
@@ -53,6 +54,13 @@ public class Group implements Parcelable {
         this.id = id;
     }
 
+    public String getDeviceIds() {
+        return deviceIds;
+    }
+
+    public void setDeviceIds(String deviceIds) {
+        this.deviceIds = deviceIds;
+    }
 
     @Override
     public int describeContents() {
@@ -68,6 +76,10 @@ public class Group implements Parcelable {
     }
 
     public Group() {
+    }
+
+    public Group(int groupId) {
+        this.groupId = groupId;
     }
 
     protected Group(Parcel in) {

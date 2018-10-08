@@ -23,7 +23,7 @@ import com.kimascend.light.mesh.MeshDetailFragment;
 import com.kimascend.light.mesh.MeshListFragment;
 import com.kimascend.light.scene.EditFragment;
 import com.kimascend.light.scene.GroupFragment2;
-import com.kimascend.light.scene.LampListDialogFragment;
+import com.kimascend.light.group.LampListDialogFragment;
 import com.kimascend.light.scene.Scene;
 import com.kimascend.light.scene.SceneFragment;
 import com.kimascend.light.scene.SceneListFragment;
@@ -156,20 +156,8 @@ public class NavigatorController {
                 .commitAllowingStateLoss();
     }
 
-//    场景 、情景灯具列表
-    public void navigateToLampList() {
-        fm.beginTransaction()
-                .replace(container, LampListDialogFragment.newInstance(), LampListDialogFragment.TAG)
-                .addToBackStack(null)
-                .commitAllowingStateLoss();
-    }
 
-    public void navigateToClockLampList() {
-        fm.beginTransaction()
-                .replace(container, com.kimascend.light.clock.LampListDialogFragment.newInstance(), LampListDialogFragment.TAG)
-                .addToBackStack(null)
-                .commitAllowingStateLoss();
-    }
+
 
     public void navigateToSelectedLamps() {
         fm.beginTransaction()

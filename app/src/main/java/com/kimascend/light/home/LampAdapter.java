@@ -8,9 +8,9 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.kimascend.light.R;
+import com.kimascend.light.common.BindingAdapters;
 import com.kimascend.light.databinding.ItemLampBinding;
 import com.kimascend.light.device.entity.Lamp;
-import com.kimascend.light.common.BindingAdapters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,9 +82,9 @@ public class LampAdapter extends RecyclerView.Adapter<LampAdapter.ViewHolder> {
                 public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
                     Lamp old = mLampList.get(oldItemPosition);
                     Lamp now = data.get(newItemPosition);
-                    return Objects.equals(old.getId(), now.getId())&&
-                     Objects.equals(old.getBrightness(), now.getBrightness())&&
-                     Objects.equals(old.getColor(), now.getColor());
+                    return Objects.equals(old.getId(), now.getId()) &&
+                            Objects.equals(old.getBrightness(), now.getBrightness()) &&
+                            Objects.equals(old.getColor(), now.getColor());
                 }
             });
             diffResult.dispatchUpdatesTo(this);
@@ -143,6 +143,16 @@ public class LampAdapter extends RecyclerView.Adapter<LampAdapter.ViewHolder> {
             }
         }
         return lamps;
+    }
+
+    public String getSelectedLampIds() {
+        StringBuilder sb = new StringBuilder();
+        for (Lamp lamp : mLampList) {
+            if (BindingAdapters.LIGHT_SELECTED == lamp.lampStatus.get()) {
+                sb.append(',').append(lamp.getDevice_id());
+            }
+        }
+        return sb.length() > 0 ? sb.substring(1) : "";
     }
 
 

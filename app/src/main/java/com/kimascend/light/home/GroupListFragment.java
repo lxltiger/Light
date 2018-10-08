@@ -22,6 +22,8 @@ import com.kimascend.light.activity.LightSettingActivity;
 import com.kimascend.light.api.ApiResponse;
 import com.kimascend.light.databinding.FragmentGroupListBinding;
 import com.kimascend.light.device.DeviceActivity;
+import com.kimascend.light.group.GroupActivity;
+import com.kimascend.light.group.GroupFragment;
 import com.kimascend.light.home.entity.Group;
 import com.kimascend.light.home.entity.GroupList;
 import com.kimascend.light.model.LightSetting;
@@ -31,7 +33,8 @@ import com.kimascend.light.utils.ToastUtil;
 import java.util.List;
 
 /**
- * 场景页面
+ * 场景列表页面
+ * 从本地数据库获取场景列表
  */
 public class GroupListFragment extends Fragment /*implements CallBack*/{
     public static final String TAG = GroupListFragment.class.getSimpleName();
@@ -85,16 +88,6 @@ public class GroupListFragment extends Fragment /*implements CallBack*/{
         }
     };
 
-    public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_add:
-                startActivity(GroupSceneActivity.newIntent(getActivity(), GroupSceneActivity.ACTION_GROUP, null));
-                return true;
-
-        }
-        return false;
-    }
-
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -126,7 +119,10 @@ public class GroupListFragment extends Fragment /*implements CallBack*/{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add:
-                startActivity(GroupSceneActivity.newIntent(getActivity(), GroupSceneActivity.ACTION_GROUP, null));
+                Intent intent = new Intent(getActivity(), GroupActivity.class);
+                Group group=new Group(-1);
+                intent.putExtra(GroupFragment.ARGUMENT_EDIT_GROUP, group);
+                startActivity(intent);
                 return true;
         }
 
@@ -136,8 +132,8 @@ public class GroupListFragment extends Fragment /*implements CallBack*/{
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume: ");
-        mBinding.setIsLoading(true);
-        viewModel.groupListRequest.setValue(1);
+//        mBinding.setIsLoading(true);
+//        viewModel.groupListRequest.setValue(1);
     }
 
 

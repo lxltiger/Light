@@ -1,0 +1,176 @@
+package com.kimascend.light.group;
+
+import android.app.Dialog;
+import android.arch.lifecycle.Observer;
+import android.content.Context;
+import android.databinding.DataBindingUtil;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.text.TextUtils;
+import android.view.Display;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.kimascend.light.CallBack;
+import com.kimascend.light.R;
+import com.kimascend.light.databinding.FragmentLampListDialogBinding;
+import com.kimascend.light.device.entity.Lamp;
+import com.kimascend.light.fragment.EditNameFragment;
+import com.kimascend.light.home.LampAdapter;
+import com.kimascend.light.home.OnHandleLampListener;
+import com.kimascend.light.common.BindingAdapters;
+import com.kimascend.light.utils.ToastUtil;
+
+import java.util.List;
+
+/**
+ * 灯具列表，可以作为对话框 从页面底部弹出
+ */
+public class LampListDialogFragment extends BottomSheetDialogFragment  {
+    public static final String TAG = LampListDialogFragment.class.getSimpleName();
+    private LampAdapter lampAdapter;
+    private GroupViewModel viewModel;
+    private  Listener listener;
+    private BottomSheetBehavior<View> mBottomSheetBehavior;
+    private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback
+            = new BottomSheetBehavior.BottomSheetCallback() {
+
+        @Override
+        public void onStateChanged(@NonNull View bottomSheet, int newState) {
+            //禁止拖拽，
+            if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+                //设置为收缩状态
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+        }
+        @Override
+        public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+        }
+    };
+
+
+    public static LampListDialogFragment newInstance() {
+        final LampListDialogFragment fragment = new LampListDialogFragment();
+        final Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        final Fragment parent = getParentFragment();
+        if (parent != null) {
+            listener = (Listener) parent;
+        } else {
+            listener = (Listener) context;
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
+    }
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        FragmentLampListDialogBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_lamp_list_dialog, null, false);
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        lampAdapter = new LampAdapter(mOnHandleLampListener);
+        //显示是否选中图片
+        lampAdapter.setShowSelectIcon(true);
+        binding.recyclerView.setAdapter(lampAdapter);
+        binding.setListener(this::OnClick);
+        viewModel = GroupActivity.obtainViewModel(getActivity());
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Dialog dialog = getDialog();
+
+        if (dialog != null) {
+            View bottomSheet = dialog.findViewById(R.id.design_bottom_sheet);
+            bottomSheet.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
+        }
+        final View view = getView();
+        view.post(() -> {
+            View parent = (View) view.getParent();
+            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) (parent).getLayoutParams();
+            CoordinatorLayout.Behavior behavior = params.getBehavior();
+            mBottomSheetBehavior = (BottomSheetBehavior) behavior;
+//                mBottomSheetBehavior.setBottomSheetCallback(mBottomSheetBehaviorCallback);
+            int heightPixels = getResources().getDisplayMetrics().heightPixels;
+            //设置高度
+            int height = heightPixels / 2;
+            mBottomSheetBehavior.setPeekHeight(height);
+//                parent.setBackgroundColor(Color.TRANSPARENT);
+        });
+
+
+    }
+
+    public void OnClick(View view) {
+        if (listener != null) {
+            String lampIds = lampAdapter.getSelectedLampIds();
+            if (TextUtils.isEmpty(lampIds)) {
+                ToastUtil.showToast("至少选择一个灯具");
+                return ;
+            }
+            listener.onClick(lampIds);
+        }
+        dismiss();
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        viewModel.load().observe(this, new Observer<List<Lamp>>() {
+            @Override
+            public void onChanged(@Nullable List<Lamp> lamps) {
+                lampAdapter.addLamps(lamps);
+            }
+        });
+
+    }
+
+
+    private OnHandleLampListener mOnHandleLampListener = new OnHandleLampListener() {
+        @Override
+        public void onItemClick(Lamp lamp) {
+//            切换选择状态
+            int status = lamp.lampStatus.get();
+            if (BindingAdapters.LIGHT_HIDE == status) {
+                lamp.lampStatus.set(BindingAdapters.LIGHT_SELECTED);
+            } else {
+                lamp.lampStatus.set(BindingAdapters.LIGHT_HIDE);
+            }
+        }
+
+
+        @Override
+        public void onDeleteClick(Lamp lamp) {
+        }
+    };
+
+
+    public interface Listener {
+        void onClick(String deviceIds);
+    }
+
+
+}
