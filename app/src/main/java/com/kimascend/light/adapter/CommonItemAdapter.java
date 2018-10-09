@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * 常用条目适配器
  */
-
+@Deprecated
 public class CommonItemAdapter extends RecyclerView.Adapter<CommonItemAdapter.ViewHolder> {
 
     private List<CommonItem> itemList;

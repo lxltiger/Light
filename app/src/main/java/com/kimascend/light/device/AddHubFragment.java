@@ -178,10 +178,10 @@ public class AddHubFragment extends Fragment implements TitleBar.OnTitleClickLis
 
         LayoutSelectLampsForhubBinding selectLampsForhubBinding = DataBindingUtil.inflate(inflater, R.layout.layout_select_lamps_forhub, null, false);
         selectLampsForhubBinding.setHandler(this);
-        selectLampsForhubBinding.lamps.setLayoutManager(new LinearLayoutManager(getActivity()));
+        selectLampsForhubBinding.lampsObserver.setLayoutManager(new LinearLayoutManager(getActivity()));
         mLampAdapter = new LampAdapter(mOnHandleLampListener);
         mLampAdapter.setShowSelectIcon(true);
-        selectLampsForhubBinding.lamps.setAdapter(mLampAdapter);*/
+        selectLampsForhubBinding.lampsObserver.setAdapter(mLampAdapter);*/
 
 
         List<View> views = new ArrayList<>();

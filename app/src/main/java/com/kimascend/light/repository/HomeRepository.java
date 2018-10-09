@@ -25,6 +25,7 @@ import com.kimascend.light.clock.ClockResult;
 import com.kimascend.light.common.BindingAdapters;
 import com.kimascend.light.common.NetWorkBoundResource;
 import com.kimascend.light.common.RequestCreator;
+import com.kimascend.light.database.GroupDao;
 import com.kimascend.light.database.LampDao;
 import com.kimascend.light.database.SmartLightDataBase;
 import com.kimascend.light.database.UserDao;
@@ -82,15 +83,15 @@ public class HomeRepository {
     private final KimAscendService kimService;
     private final UserDao userDao;
     private final LampDao lampDao;
+    private final GroupDao groupDao;
     private final AppExecutors executors;
 
-    @Deprecated
-    public final MutableLiveData<Integer> meshStatus = new MutableLiveData<>();
 
     private HomeRepository(Context context) {
         mDataBase = SmartLightDataBase.INSTANCE(context);
         userDao = mDataBase.user();
         lampDao = mDataBase.lamp();
+        groupDao=mDataBase.group();
         kimService = NetWork.kimService();
         executors = SmartLightApp.INSTANCE().appExecutors();
     }
@@ -460,10 +461,10 @@ public class HomeRepository {
 
     private void deleteClockDevice(MediatorLiveData<ClockRequest> updateResult, ClockRequest clockRequest) {
         //使用全部灯具id 旧的不好记录
-       /* Log.d(TAG, "onChanged: " + lamps.toString());
+       /* Log.d(TAG, "onChanged: " + lampsObserver.toString());
         List<String> idsToDelete = new ArrayList<>();
         List<String> idsToAdd = new ArrayList<>();
-        for (Lamp lamp : lamps) {
+        for (Lamp lamp : lampsObserver) {
             idsToDelete.add(lamp.getId());
             if (lamp.isSelected()) {
                 idsToAdd.add(lamp.getId());
@@ -1058,10 +1059,10 @@ public class HomeRepository {
             @Override
             public void onChanged(List<Lamp> lamps) {
                 mediatorLiveData.removeSource(local);
-                List<String> deviceIds = Arrays.asList(group.getDeviceIds().split(","));
+                List<Integer> deviceIds = group.getDeviceIdList();
                 if (lamps != null) {
                     for (Lamp lamp : lamps) {
-                        if (deviceIds.contains(String.valueOf(lamp.getDevice_id()))) {
+                        if (deviceIds.contains(lamp.getDevice_id())) {
                             lamp.lampStatus.set(BindingAdapters.LIGHT_SELECTED);
                         } else {
                             lamp.lampStatus.set(BindingAdapters.LIGHT_HIDE);
@@ -1677,5 +1678,25 @@ public class HomeRepository {
 
     public void deleteDeviceFromLocal(Lamp lamp) {
         lampDao.deleteLampById(lamp.getId());
+    }
+
+
+    // FIXME: 2018/10/9 0009 不靠谱
+    public int getGroupNum() {
+
+        return groupDao.getGroupRowId();
+
+    }
+
+    public void addUpdateGroup(Group group) {
+        groupDao.insert(group);
+    }
+
+    public LiveData<List<Group>> getGroupList() {
+        return groupDao.loadAllGroups();
+    }
+
+    public void deleteGroup(Group group) {
+        groupDao.deleteGroup(group);
     }
 }

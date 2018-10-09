@@ -8,9 +8,7 @@
             name="viewModel"
             type="com.kimascend.light.group.GroupViewModel" />
 
-        <variable
-            name="edit"
-            type="boolean" />
+
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -22,6 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            app:items="@{viewModel.groupItems}"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -37,12 +36,13 @@
             android:layout_marginBottom="16dp"
             android:background="@drawable/bg_blue"
             android:text="删除"
+            android:onClick="@{()->viewModel.delete()}"
             android:textColor="@android:color/white"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:visibleGone="@{edit}" />
+            app:visibleGone="@{viewModel.edit}" />
     </android.support.constraint.ConstraintLayout>
 
 </layout>

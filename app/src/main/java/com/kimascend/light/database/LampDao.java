@@ -67,4 +67,7 @@ public interface LampDao {
     LiveData<Lamp> loadLamp(String meshId,int deviceId);
 
 
+
+
+
 }

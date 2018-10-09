@@ -8,6 +8,7 @@ import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.ImageViewCompat;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.util.Log;
@@ -23,7 +24,11 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.kimascend.light.Config;
 import com.kimascend.light.R;
+import com.kimascend.light.adapter.GeneralItemAdapter;
+import com.kimascend.light.model.GeneralItem;
 import com.kimascend.light.view.ImageTransformationType;
+
+import java.util.List;
 
 /**
  * xml中不要出现复杂的表达式
@@ -55,19 +60,19 @@ public class BindingAdapters {
      */
     @android.databinding.BindingAdapter("icon")
     public static void setAddIcon(ImageView view, int status) {
-        boolean clickable=true;
+        boolean clickable = true;
         switch (status) {
             case ADD:
                 view.setImageDrawable(ContextCompat.getDrawable(view.getContext(), R.drawable.icon_add));
-                clickable=true;
+                clickable = true;
                 break;
             case ADDING:
                 view.setImageDrawable(ContextCompat.getDrawable(view.getContext(), R.drawable.icon_refresh));
-                clickable=false;
+                clickable = false;
                 break;
             case ADDED:
                 view.setImageDrawable(ContextCompat.getDrawable(view.getContext(), R.drawable.icon_add_ok));
-                clickable=false;
+                clickable = false;
                 break;
             default:
                 view.setVisibility(View.GONE);
@@ -141,7 +146,6 @@ public class BindingAdapters {
     }
 
 
-
     /**
      * @param view
      * @param type
@@ -185,21 +189,7 @@ public class BindingAdapters {
     public static void loadImageUrl(ImageView view, String url, ImageTransformationType type) {
         if (!TextUtils.isEmpty(url)) {
             Context context = view.getContext();
-            Glide.with(context).load(Config.IMG_PREFIX.concat(url)).listener(drawableRequestListener).into(view);
-            /*if (type == null) {
-                type = ImageTransformationType.NONE;
-            }
-            switch (type) {
-                case ROUND:
-                    Glide.with(context).load(Config.IMG_PREFIX.concat(url)).transform(new RoundTransform(context, 2)).crossFade(1000).into(view);
-                    break;
-                case CIRCLE:
-                    Glide.with(context).load(Config.IMG_PREFIX.concat(url)).transform(new CircleTransform(context)).crossFade(1000).listener(drawableRequestListener).into(view);
-                    break;
-                case NONE:
-                default:
-                    break;
-            }*/
+            Glide.with(context).load(url).listener(drawableRequestListener).into(view);
         }
     }
 
@@ -223,14 +213,30 @@ public class BindingAdapters {
     /*
      *  注意：参数的顺序要和value中的一致
      * */
-    @BindingAdapter(value = {"dynamicImage", "resId"}, requireAll = false)
-    public static void loadDynamicImage(ImageView view, String dynamicImage, int resId) {
-        if (!TextUtils.isEmpty(dynamicImage)) {
-            Glide.with(view.getContext()).load(dynamicImage).listener(drawableRequestListener).into(view);
-        } else if (resId > 0) {
-            view.setImageResource(resId);
+    @BindingAdapter(value = {"dynamicImage", "resId", "show"}, requireAll = false)
+    public static void loadDynamicImage(ImageView view, String dynamicImage, int resId, boolean show) {
+        if (show) {
+            view.setVisibility(View.VISIBLE);
+            if (!TextUtils.isEmpty(dynamicImage)) {
+                Glide.with(view.getContext()).load(dynamicImage).listener(drawableRequestListener).into(view);
+            } else if (resId > 0) {
+                view.setImageResource(resId);
+            }
+        } else {
+            view.setVisibility(View.GONE);
         }
     }
+
+
+    @BindingAdapter(value = "items")
+    public static void setGeneralItems(RecyclerView recyclerView, List<GeneralItem> items) {
+        GeneralItemAdapter itemAdapter = (GeneralItemAdapter) recyclerView.getAdapter();
+        if (itemAdapter != null) {
+            itemAdapter.replace(items);
+        }
+    }
+
+
 
     @BindingAdapter(value = {"avatar", "resId"}, requireAll = false)
     public static void loadAvatar(ImageView view, String avatar, int resId) {
@@ -251,7 +257,7 @@ public class BindingAdapters {
             ImageViewCompat.setImageTintList(view, ColorStateList.valueOf(rgb));
         } else {
             Drawable drawable = ContextCompat.getDrawable(view.getContext(), R.drawable.ic_arrow_drop_down_black_24dp);
-            DrawableCompat.setTint(drawable,rgb);
+            DrawableCompat.setTint(drawable, rgb);
             view.setImageDrawable(drawable);
         }
 

@@ -5,8 +5,8 @@
     <data>
 
         <variable
-            name="title"
-            type="String" />
+            name="viewModel"
+            type="com.kimascend.light.group.GroupViewModel" />
     </data>
 
     <LinearLayout
@@ -26,7 +26,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@{title}"
+                android:text="@{viewModel.title}"
                 android:textColor="@android:color/white"
                 android:textSize="20sp" />
 

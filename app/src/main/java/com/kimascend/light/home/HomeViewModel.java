@@ -16,6 +16,7 @@ import com.kimascend.light.api.Resource;
 import com.kimascend.light.app.SmartLightApp;
 import com.kimascend.light.common.SnackbarMessage;
 import com.kimascend.light.device.entity.Lamp;
+import com.kimascend.light.home.entity.Group;
 import com.kimascend.light.home.entity.GroupList;
 import com.kimascend.light.home.entity.Hub;
 import com.kimascend.light.home.entity.HubList;
@@ -72,7 +73,7 @@ public class HomeViewModel extends AndroidViewModel {
     // 场景列表请求
     public MutableLiveData<Integer> groupListRequest = new MutableLiveData<>();
     //场景列表监听
-    public final LiveData<ApiResponse<GroupList>> groupListObserver;
+//    public final LiveData<ApiResponse<GroupList>> groupListObserver;
 
     //情景列表
     public final MutableLiveData<Integer> sceneListRequest = new MutableLiveData<>();
@@ -81,6 +82,8 @@ public class HomeViewModel extends AndroidViewModel {
 
     public final MutableLiveData<Integer> userInfoRequest = new MutableLiveData<>();
     public final LiveData<User> userInfoObserver;
+
+     final LiveData<List<Group>> groupListObserver;
 
     SnackbarMessage snackbarMessage = new SnackbarMessage();
     private Handler handler;
@@ -93,7 +96,7 @@ public class HomeViewModel extends AndroidViewModel {
 
         hubListObserver = Transformations.switchMap(hubListRequest, input -> repository.getHubList(input));
 
-        groupListObserver = Transformations.switchMap(groupListRequest, input -> repository.getGroupList(input));
+//        groupListObserver = Transformations.switchMap(groupListRequest, input -> repository.getGroupList(input));
 
         deleteLampObserver = Transformations.switchMap(deleteLampRequest, input -> repository.deleteDevice(input));
 
@@ -102,6 +105,9 @@ public class HomeViewModel extends AndroidViewModel {
         deleteHubObserver = Transformations.switchMap(deleteHubRequest, repository::deleteHub);
 
         userInfoObserver = Transformations.switchMap(userInfoRequest, input -> repository.getUserInfo());
+
+        groupListObserver = repository.getGroupList();
+
     }
 
     void callBack(Event<String> event) {

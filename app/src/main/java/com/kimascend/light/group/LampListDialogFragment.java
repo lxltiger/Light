@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,19 +13,13 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
-import android.view.Display;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.kimascend.light.CallBack;
 import com.kimascend.light.R;
 import com.kimascend.light.databinding.FragmentLampListDialogBinding;
 import com.kimascend.light.device.entity.Lamp;
-import com.kimascend.light.fragment.EditNameFragment;
 import com.kimascend.light.home.LampAdapter;
 import com.kimascend.light.home.OnHandleLampListener;
 import com.kimascend.light.common.BindingAdapters;
@@ -139,7 +132,7 @@ public class LampListDialogFragment extends BottomSheetDialogFragment  {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        viewModel.load().observe(this, new Observer<List<Lamp>>() {
+        viewModel.lampsObserver.observe(this, new Observer<List<Lamp>>() {
             @Override
             public void onChanged(@Nullable List<Lamp> lamps) {
                 lampAdapter.addLamps(lamps);

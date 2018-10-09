@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--通用的条目 -->
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+       <variable
+           name="item"
+           type="com.kimascend.light.model.GeneralItem"/>
+
+        <variable
+            name="callBack"
+            type="com.kimascend.light.ItemClickListener" />
+    </data>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:onClick="@{() -> callBack.onClick(item)}"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="名称"
+            android:textSize="16sp"
+            android:gravity="center_vertical"
+            android:layout_centerVertical="true"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:text="@{item.name}"/>
+        <ImageView
+            android:id="@+id/iv_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            app:visibleGone="@{item.clickable}"
+            android:background="@drawable/icon_next"/>
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="36dp"
+            tools:background="@mipmap/ic_launcher"
+            android:layout_centerVertical="true"
+            app:show="@{!item.isText}"
+            app:dynamicImage="@{item.observableValue}"
+            app:resId="@{item.defaultResId}"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="36dp"
+            app:visibleGone="@{item.isText}"
+            android:layout_centerVertical="true"
+            android:text="@{item.observableValue}"
+            tools:text="demo"
+            />
+        <View
+            style="@style/divider"
+            android:layout_alignParentBottom="true"/>
+    </RelativeLayout>
+</layout>

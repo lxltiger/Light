@@ -36,9 +36,8 @@ import java.util.List;
  * 场景列表页面
  * 从本地数据库获取场景列表
  */
-public class GroupListFragment extends Fragment /*implements CallBack*/{
+public class GroupListFragment extends Fragment {
     public static final String TAG = GroupListFragment.class.getSimpleName();
-    private FragmentGroupListBinding mBinding;
     private GroupAdapter groupAdapter;
     private HomeViewModel viewModel;
 
@@ -62,7 +61,7 @@ public class GroupListFragment extends Fragment /*implements CallBack*/{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_group_list, container, false);
+        FragmentGroupListBinding mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_group_list, container, false);
         mBinding.scenes.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         groupAdapter = new GroupAdapter(mHandleSceneListener);
         mBinding.scenes.setAdapter(groupAdapter);
@@ -78,7 +77,8 @@ public class GroupListFragment extends Fragment /*implements CallBack*/{
 
         @Override
         public void onEditClick(Group group) {
-            Intent intent = GroupSceneActivity.newIntent(getActivity(), GroupSceneActivity.ACTION_GROUP, group);
+            Intent intent = new Intent(getActivity(), GroupActivity.class);
+            intent.putExtra(GroupFragment.ARGUMENT_EDIT_GROUP, group);
             startActivity(intent);
 
         }
@@ -93,17 +93,11 @@ public class GroupListFragment extends Fragment /*implements CallBack*/{
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         viewModel = ViewModelProviders.of(getActivity()).get(HomeViewModel.class);
-        viewModel.groupListObserver.observe(this, new Observer<ApiResponse<GroupList>>() {
+        viewModel.groupListObserver.observe(this, new Observer<List<Group>>() {
             @Override
-            public void onChanged(@Nullable ApiResponse<GroupList> apiResponse) {
-                mBinding.setIsLoading(false);
-                if (apiResponse.isSuccessful()) {
-                    if (apiResponse.body != null) {
-                        List<Group> list = apiResponse.body.getList();
-                        if (list != null) {
-                            groupAdapter.addScenes(list);
-                        }
-                    }
+            public void onChanged(@Nullable List<Group> list) {
+                if (list != null) {
+                    groupAdapter.addScenes(list);
                 }
             }
         });
@@ -120,20 +114,13 @@ public class GroupListFragment extends Fragment /*implements CallBack*/{
         switch (item.getItemId()) {
             case R.id.action_add:
                 Intent intent = new Intent(getActivity(), GroupActivity.class);
-                Group group=new Group(-1);
+                Group group=new Group();
                 intent.putExtra(GroupFragment.ARGUMENT_EDIT_GROUP, group);
                 startActivity(intent);
                 return true;
         }
 
         return false;
-    }
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume: ");
-//        mBinding.setIsLoading(true);
-//        viewModel.groupListRequest.setValue(1);
     }
 
 

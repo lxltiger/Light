@@ -250,6 +250,10 @@
     <string name="setting">已设置</string>
     <string name="unsettting">未设置</string>
     <string name="succeed_to_connect">连接成功</string>
+    <string name="lack_name">还没有设置名称</string>
+    <string name="lack_icon">还没有设置图片</string>
+    <string name="lack_lamps">还没有选择灯具</string>
+    <string name="empty_lamps">灯具列表为空</string>
 
 
 </resources>

@@ -5,6 +5,7 @@ import android.databinding.ObservableField;
 /**
  * 通用的条目
  */
+@Deprecated
 public class CommonItem {
 
     public  String name="";
