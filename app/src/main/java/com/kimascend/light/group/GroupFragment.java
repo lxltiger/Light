@@ -98,14 +98,11 @@ public class GroupFragment extends Fragment implements ProduceAvatarFragment.Lis
     @Override
     public void onItemClicked(File file) {
         viewModel.handleIcon(file);
-
-
     }
 
     @Override
     public void onConfirmClick(String content) {
         viewModel.handleName(content);
-
     }
 
     @Override

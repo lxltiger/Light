@@ -69,12 +69,8 @@ public class HomeActivity extends AppCompatActivity  {
         }
         viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         MeshEventManager.bindListenerForHome(this,viewModel::callBack,SmartLightApp.INSTANCE());
-        viewModel.snackbarMessage.observe(this, new SnackbarMessage.SnackbarObserver() {
-            @Override
-            public void onNewMessage(int snackbarMessageResourceId) {
-                SnackbarUtils.showSnackbar(binding.getRoot(), getString(snackbarMessageResourceId));
-            }
-        });
+        viewModel.snackbarMessage.observe(this,
+                (SnackbarMessage.SnackbarObserver) snackbarMessageResourceId -> SnackbarUtils.showSnackbar(binding.getRoot(), getString(snackbarMessageResourceId)));
     }
 
 

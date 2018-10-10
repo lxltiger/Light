@@ -77,13 +77,14 @@ public class HomeViewModel extends AndroidViewModel {
 
     //情景列表
     public final MutableLiveData<Integer> sceneListRequest = new MutableLiveData<>();
-    public final LiveData<Resource<List<Scene>>> sceneListObserver;
+//    public final LiveData<Resource<List<Scene>>> sceneListObserver;
 
 
     public final MutableLiveData<Integer> userInfoRequest = new MutableLiveData<>();
     public final LiveData<User> userInfoObserver;
 
      final LiveData<List<Group>> groupListObserver;
+     final LiveData<List<Scene>> sceneListObserver;
 
     SnackbarMessage snackbarMessage = new SnackbarMessage();
     private Handler handler;
@@ -100,13 +101,14 @@ public class HomeViewModel extends AndroidViewModel {
 
         deleteLampObserver = Transformations.switchMap(deleteLampRequest, input -> repository.deleteDevice(input));
 
-        sceneListObserver = Transformations.switchMap(sceneListRequest, repository::getSceneList);
+//        sceneListObserver = Transformations.switchMap(sceneListRequest, repository::getSceneList);
 
         deleteHubObserver = Transformations.switchMap(deleteHubRequest, repository::deleteHub);
 
         userInfoObserver = Transformations.switchMap(userInfoRequest, input -> repository.getUserInfo());
 
         groupListObserver = repository.getGroupList();
+        sceneListObserver = repository.getSceneList();
 
     }
 

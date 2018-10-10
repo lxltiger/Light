@@ -1,7 +1,7 @@
 package com.kimascend.light.scene;
 
 import java.util.List;
-
+@Deprecated
 public class SceneList {
 
 

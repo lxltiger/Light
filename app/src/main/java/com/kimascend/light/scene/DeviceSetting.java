@@ -1,5 +1,5 @@
 package com.kimascend.light.scene;
-
+@Deprecated
 public class DeviceSetting {
 
 

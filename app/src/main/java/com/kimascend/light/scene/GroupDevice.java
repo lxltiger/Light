@@ -5,6 +5,7 @@ import com.kimascend.light.device.entity.Lamp;
 import java.util.List;
 
 /*场景下的设备*/
+@Deprecated
 public class GroupDevice {
 
     /**

@@ -8,32 +8,29 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
 import com.kimascend.light.home.entity.Group;
-import com.kimascend.light.mesh.Mesh;
 import com.kimascend.light.scene.Scene;
-import com.kimascend.light.user.Profile;
 
 import java.util.List;
 
 @Dao
-public interface GroupDao {
+public interface SceneDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(Group group);
+    void insert(Scene scene);
 
 
-    @Query("select * from 'group'")
-    LiveData<List<Group>> loadAllGroups();
+    @Query("select * from scene")
+    LiveData<List<Scene>> loadAllScene();
 
 
     @Delete
-    void deleteGroup(Group group);
+    void delete(Scene scene);
 
-    @Query("delete from `group`")
-    void deleteAllGroups();
+    @Query("delete from scene")
+    void deleteAllScenes();
 
 
-
-    @Query("select  max(groupId)  from 'group' ")
-    int getGroupRowId();
+    @Query("select  max(sceneId)  from scene ")
+    int getMaxSceneId();
 
 }

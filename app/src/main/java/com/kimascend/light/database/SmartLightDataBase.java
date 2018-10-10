@@ -21,7 +21,7 @@ import com.kimascend.light.user.Profile;
  *
  *  如果在Dao中使用了某个字段， 如果识别不了，需要加上ColumnInfo注解
  */
-@Database(entities = {Lamp.class, Profile.class,Mesh.class, Scene.class,Group.class}, version = 6, exportSchema = false)
+@Database(entities = {Lamp.class, Profile.class,Mesh.class, Scene.class,Group.class}, version = 7, exportSchema = false)
 public abstract class SmartLightDataBase extends RoomDatabase {
 
     private static final String DATABASE_NAME = "SmartLight.db";
@@ -30,12 +30,13 @@ public abstract class SmartLightDataBase extends RoomDatabase {
     public abstract LampDao lamp();
     public abstract UserDao user();
     public abstract GroupDao group();
+    public abstract SceneDao scene();
 
     public synchronized static SmartLightDataBase INSTANCE(Context context) {
         if (sDataBase == null) {
             sDataBase = Room.databaseBuilder(context.getApplicationContext(), SmartLightDataBase.class, DATABASE_NAME)
                     .allowMainThreadQueries()
-                    .addMigrations(MIGRATION_3_4,MIGRATION_4_5,MIGRATION_5_6)
+                    .addMigrations(MIGRATION_3_4,MIGRATION_4_5,MIGRATION_5_6,MIGRATION_6_7)
 //                    .fallbackToDestructiveMigration()
                     .build();
         }
@@ -63,6 +64,13 @@ public abstract class SmartLightDataBase extends RoomDatabase {
         public void migrate(SupportSQLiteDatabase database) {
 //            加了一个表group
             database.execSQL("CREATE TABLE IF NOT EXISTS `group` (`groupId` INTEGER NOT NULL, `id` TEXT NOT NULL, `name` TEXT, `icon` TEXT, `deviceIds` TEXT, PRIMARY KEY(`id`))");
+        }
+    };
+
+    private static final Migration MIGRATION_6_7 = new Migration(6, 7) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE scene ADD COLUMN deviceIds text");
         }
     };
 }

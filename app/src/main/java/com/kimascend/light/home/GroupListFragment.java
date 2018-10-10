@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,16 +18,11 @@ import android.view.ViewGroup;
 
 import com.kimascend.light.R;
 import com.kimascend.light.activity.LightSettingActivity;
-import com.kimascend.light.api.ApiResponse;
 import com.kimascend.light.databinding.FragmentGroupListBinding;
-import com.kimascend.light.device.DeviceActivity;
 import com.kimascend.light.group.GroupActivity;
 import com.kimascend.light.group.GroupFragment;
 import com.kimascend.light.home.entity.Group;
-import com.kimascend.light.home.entity.GroupList;
 import com.kimascend.light.model.LightSetting;
-import com.kimascend.light.scene.GroupSceneActivity;
-import com.kimascend.light.utils.ToastUtil;
 
 import java.util.List;
 
@@ -39,7 +33,6 @@ import java.util.List;
 public class GroupListFragment extends Fragment {
     public static final String TAG = GroupListFragment.class.getSimpleName();
     private GroupAdapter groupAdapter;
-    private HomeViewModel viewModel;
 
 
     public GroupListFragment() {
@@ -92,7 +85,7 @@ public class GroupListFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        viewModel = ViewModelProviders.of(getActivity()).get(HomeViewModel.class);
+        HomeViewModel viewModel = ViewModelProviders.of(getActivity()).get(HomeViewModel.class);
         viewModel.groupListObserver.observe(this, new Observer<List<Group>>() {
             @Override
             public void onChanged(@Nullable List<Group> list) {

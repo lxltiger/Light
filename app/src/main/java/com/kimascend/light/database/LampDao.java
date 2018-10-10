@@ -19,7 +19,7 @@ public interface LampDao {
     @Query("select * from lamp where meshId=:meshId")
     LiveData<List<Lamp>> loadLampsUnderMesh(String meshId);
 
-    @Query("select count(*) from lamp where meshId=:meshId")
+    @Query("select max(device_id) from lamp where meshId=:meshId")
     int getLampNum(String meshId);
 
 

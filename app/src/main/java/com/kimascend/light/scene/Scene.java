@@ -4,6 +4,16 @@ import android.arch.persistence.room.Entity;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
+import android.util.SparseIntArray;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * createTime : {"date":19,"day":4,"hours":16,"minutes":54,"month":6,"seconds":40,"time":1531990480000,"timezoneOffset":-480,"year":118}
@@ -26,6 +36,7 @@ public class Scene implements Parcelable {
     private String meshName;
     private String name;
     private int sceneId;
+    private String deviceIds = "";
 
 
     public String getCreater() {
@@ -68,9 +79,6 @@ public class Scene implements Parcelable {
         this.meshName = meshName;
     }
 
-    public String getName() {
-        return name;
-    }
 
     public void setName(String name) {
         this.name = name;
@@ -84,6 +92,34 @@ public class Scene implements Parcelable {
         this.sceneId = sceneId;
     }
 
+    public String getDeviceIds() {
+        return deviceIds;
+    }
+
+    public void setDeviceIds(String deviceIds) {
+        this.deviceIds = deviceIds;
+    }
+
+    public String getName() {
+        if (TextUtils.isEmpty(name)) {
+            return "请输入";
+        }
+        return name;
+    }
+
+
+    public SparseIntArray getSceneSetting() {
+        if (TextUtils.isEmpty(deviceIds)) {
+            return new SparseIntArray();
+        }
+        Type type = new TypeToken<SparseIntArray>() {}.getType();
+        return new Gson().fromJson(deviceIds, type);
+    }
+
+    public Scene() {
+        this.sceneId = -1;
+        id = UUID.randomUUID().toString();
+    }
 
     @Override
     public int describeContents() {
@@ -92,26 +128,25 @@ public class Scene implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
         dest.writeString(this.creater);
         dest.writeString(this.icon);
-        dest.writeString(this.id);
         dest.writeString(this.meshId);
         dest.writeString(this.meshName);
         dest.writeString(this.name);
         dest.writeInt(this.sceneId);
-    }
-
-    public Scene() {
+        dest.writeString(this.deviceIds);
     }
 
     protected Scene(Parcel in) {
+        this.id = in.readString();
         this.creater = in.readString();
         this.icon = in.readString();
-        this.id = in.readString();
         this.meshId = in.readString();
         this.meshName = in.readString();
         this.name = in.readString();
         this.sceneId = in.readInt();
+        this.deviceIds = in.readString();
     }
 
     public static final Creator<Scene> CREATOR = new Creator<Scene>() {

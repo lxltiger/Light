@@ -17,11 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
-import com.kimascend.light.CallBack;
 import com.kimascend.light.R;
 import com.kimascend.light.api.ApiResponse;
 import com.kimascend.light.databinding.FragmentClockListBinding;
-import com.kimascend.light.scene.GroupSceneActivity;
 import com.kimascend.light.utils.ToastUtil;
 
 import java.util.List;

@@ -48,7 +48,7 @@ public class GroupViewModel extends AndroidViewModel {
         List<GeneralItem> generalItems = GeneralItem.fromGroup(group);
         groupItems.clear();
         groupItems.addAll(generalItems);
-        lampsObserver = repository.loadGroupDeviceList(group);
+        lampsObserver = repository.loadDeviceListWithMark(group.getDeviceIdList());
 
     }
 
@@ -57,6 +57,7 @@ public class GroupViewModel extends AndroidViewModel {
     }
 
     public void delete() {
+        // TODO: 2018/10/9 0009 解除所有关系
         repository.deleteGroup(group);
         completeEvent.call();
     }
@@ -108,7 +109,7 @@ public class GroupViewModel extends AndroidViewModel {
         }
 
         for (Lamp lamp : lampList) {
-            LightCommandUtils.allocDeviceGroup(group.getGroupId(), lamp.getDevice_id(), BindingAdapters.LIGHT_SELECTED == lamp.lampStatus.get());
+            LightCommandUtils.allocDeviceGroup(group.getGroupId(), lamp.getDevice_id(), lamp.isSelected());
 
         }
         repository.addUpdateGroup(group);

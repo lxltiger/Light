@@ -11,6 +11,9 @@ import com.kimascend.light.app.SmartLightApp;
 import com.kimascend.light.databinding.GroupActivityBinding;
 import com.kimascend.light.home.entity.Group;
 
+/**
+ * 场景的添加和修改UI
+ */
 public class GroupActivity extends AppCompatActivity {
 
     private GroupActivityBinding binding;

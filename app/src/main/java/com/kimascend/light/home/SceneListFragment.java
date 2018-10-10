@@ -1,4 +1,4 @@
-package com.kimascend.light.scene;
+package com.kimascend.light.home;
 
 
 import android.arch.lifecycle.Observer;
@@ -16,24 +16,26 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.kimascend.light.CallBack;
 import com.kimascend.light.R;
 import com.kimascend.light.api.Resource;
 import com.kimascend.light.command.SceneCommand;
 import com.kimascend.light.command.TelinkSceneCommand;
 import com.kimascend.light.databinding.FragmentSceneListBinding;
+import com.kimascend.light.scene.SceneActivity;
+import com.kimascend.light.scene.OnHandleSceneListener;
+import com.kimascend.light.scene.Scene;
+import com.kimascend.light.scene.SceneAdapter;
+import com.kimascend.light.scene.SceneViewModel;
 
 import java.util.List;
 
 /**
- * 情景列表页面
- * 情景不仅能控制多个灯具 还能控制多个场景
+ * 情景列表页面，点击条目直接加载设置
+ *
  */
 public class SceneListFragment extends Fragment /*implements CallBack*/ {
     public static final String TAG = SceneListFragment.class.getSimpleName();
     private SceneAdapter sceneAdapter;
-    private SceneViewModel viewModel;
-    private FragmentSceneListBinding binding;
     private SceneCommand sceneCommand;
 
 
@@ -46,20 +48,18 @@ public class SceneListFragment extends Fragment /*implements CallBack*/ {
         fragment.setArguments(args);
         return fragment;
     }
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_scene_list, container, false);
+        FragmentSceneListBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_scene_list, container, false);
         binding.scenes.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         sceneAdapter = new SceneAdapter(mHandleSceneListener);
         binding.scenes.setAdapter(sceneAdapter);
         sceneCommand = new TelinkSceneCommand();
+        setHasOptionsMenu(true);
+
         return binding.getRoot();
     }
 
@@ -70,12 +70,11 @@ public class SceneListFragment extends Fragment /*implements CallBack*/ {
             sceneCommand.setSceneAddress(scene.getSceneId());
             sceneCommand.setDstAddress(0xffff);
             sceneCommand.handleSceneOperation(SceneCommand.SceneOperation.LOAD,redundant,redundant,redundant,redundant);
-//            LightCommandUtils.loadScene(scene.getSceneId());
         }
 
         @Override
         public void onEditClick(Scene scene) {
-            GroupSceneActivity.start(getContext(), GroupSceneActivity.ACTION_SCENE, scene);
+            SceneActivity.start(getContext(), scene);
         }
     };
 
@@ -83,30 +82,16 @@ public class SceneListFragment extends Fragment /*implements CallBack*/ {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        viewModel = ViewModelProviders.of(this).get(SceneViewModel.class);
-       /* viewModel.sceneListObserver.observe(this, new Observer<ApiResponse<SceneList>>() {
+        HomeViewModel viewModel = ViewModelProviders.of(getActivity()).get(HomeViewModel.class);
+        viewModel.sceneListObserver.observe(this, new Observer<List<Scene>>() {
             @Override
-            public void onChanged(@Nullable ApiResponse<SceneList> apiResponse) {
-                if (apiResponse.isSuccessful()) {
-                    if (apiResponse.body != null) {
-                        List<Scene> list = apiResponse.body.getList();
-                        if (list != null) {
-                            sceneAdapter.addScenes(list);
-                        }
-                    }
-                }
-            }
-        });*/
-
-        viewModel.sceneListObserver.observe(this, new Observer<Resource<List<Scene>>>() {
-            @Override
-            public void onChanged(@Nullable Resource<List<Scene>> resource) {
-                binding.setResource(resource);
-                if (null != resource.data) {
-                    sceneAdapter.addScenes(resource.data);
+            public void onChanged(@Nullable List<Scene> scenes) {
+                if (scenes != null) {
+                    sceneAdapter.addScenes(scenes);
                 }
             }
         });
+
     }
 
     @Override
@@ -119,30 +104,12 @@ public class SceneListFragment extends Fragment /*implements CallBack*/ {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add:
-                GroupSceneActivity.start(getContext(), GroupSceneActivity.ACTION_SCENE, null);
-
+                SceneActivity.start(getContext(), new Scene());
                 return true;
         }
 
         return false;
     }
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause: ");
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart: ");
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume: ");
-        viewModel.sceneListRequest.setValue(1);
-    }
 
 }

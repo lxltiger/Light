@@ -1,6 +1,7 @@
 package com.kimascend.light.scene;
 
 /*场景详情*/
+@Deprecated
 public class GroupDetail {
 
     /**

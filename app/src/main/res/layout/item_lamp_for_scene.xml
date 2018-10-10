@@ -5,6 +5,7 @@
 
     <data>
 
+        <import type="com.kimascend.light.common.BindingAdapters" />
 
         <variable
             name="lamp"
@@ -12,8 +13,7 @@
 
         <variable
             name="handler"
-            type="com.kimascend.light.home.OnHandleLampListener" />
-
+            type="com.kimascend.light.scene.OnSceneSettingListener" />
 
 
     </data>
@@ -38,27 +38,39 @@
                 android:layout_marginStart="8dp"
                 android:background="@drawable/icon_light" />
 
-            <TextView
+
+            <ImageView
                 android:id="@+id/iv_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="8dp"
-                tools:text="@string/unsettting"
-                android:text='@{lamp.isSetting?@string/setting:@string/unsettting}' />
+                app:lightStatus="@{lamp.lampStatus}"
+                tools:background="@drawable/bg_grey_circle" />
+
+            <ImageView
+                android:id="@+id/iv_switch"
+                app:visibleGone="@{lamp.lampStatus==BindingAdapters.LIGHT_SELECTED}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="16dp"
+                android:layout_toStartOf="@+id/iv_status"
+                android:background="@{lamp.onOff?@drawable/light_control_btn:@drawable/lightcontrol_off_btn}"
+                android:onClick="@{()->handler.onSwitchClick(lamp)}"
+                tools:background="@drawable/light_control_btn" />
 
             <TextView
                 android:id="@+id/tv_name_mac"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_toEndOf="@+id/iv_icon"
-                android:layout_toStartOf="@+id/iv_status"
                 android:gravity="center_vertical"
                 android:lineSpacingMultiplier="1.5"
                 android:lines="2"
-                android:paddingEnd="8dp"
                 android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:text='@{lamp.description}'
                 tools:text="hei\nzhng" />
 
@@ -70,13 +82,11 @@
         </RelativeLayout>
 
 
-
         <Button
             android:id="@+id/delete"
             android:layout_width="60dp"
             android:layout_height="match_parent"
             android:background="#FF00"
-            android:onClick="@{()->handler.onDeleteClick(lamp)}"
             android:text="@string/delete"
             android:textColor="@android:color/white" />
 

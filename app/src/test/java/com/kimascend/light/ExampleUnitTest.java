@@ -1,5 +1,7 @@
 package com.kimascend.light;
 
+import android.util.SparseIntArray;
+
 import com.telink.util.NumberUtils;
 
 import org.junit.Test;
@@ -160,10 +162,10 @@ public class ExampleUnitTest {
 
     @Test
     public void testString() {
-        String test = "";
-        String[] strings = test.split(",");
-        List<String> strings1 = Arrays.asList(strings);
-        System.out.println(strings1.size());
+        SparseIntArray setting = new SparseIntArray();
+        setting.put(1, 3);
+        setting.put(2, 5);
+        System.out.println(setting.toString());
     }
 
 

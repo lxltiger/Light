@@ -21,7 +21,7 @@ import com.kimascend.light.clock.ClockActivity;
 import com.kimascend.light.common.AutoClearValue;
 import com.kimascend.light.databinding.FragmentMoreBinding;
 import com.kimascend.light.model.User;
-import com.kimascend.light.scene.GroupSceneActivity;
+import com.kimascend.light.scene.SceneActivity;
 import com.kimascend.light.user.UserActivity;
 
 /**
@@ -87,9 +87,9 @@ public class MoreFragment extends Fragment implements CallBack {
             case R.id.portrait://点击头像
                 break;
             case R.id.btn_scene: {
-                Intent intent = new Intent(getActivity(), GroupSceneActivity.class);
-                intent.putExtra("action", GroupSceneActivity.ACTION_SCENE_LIST);
-                startActivityForResult(intent, 10);
+               /* Intent intent = new Intent(getActivity(), SceneActivity.class);
+                intent.putExtra("action", SceneActivity.ACTION_SCENE_LIST);
+                startActivityForResult(intent, 10);*/
             }
             break;
             case R.id.btn_clock:

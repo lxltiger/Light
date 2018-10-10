@@ -46,6 +46,15 @@ public class GeneralItem {
         return items;
     }
 
+    public static List<GeneralItem> from(String icon,String name,String deviceNum) {
+        List<GeneralItem> items = new ArrayList<>();
+        items.add(new Builder("图片", 0).setValue(icon).isText(false).build());
+        items.add(new Builder("名称", 1).setValue(name).build());
+        items.add(new Builder("设备", 2).setValue(deviceNum).build());
+
+        return items;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

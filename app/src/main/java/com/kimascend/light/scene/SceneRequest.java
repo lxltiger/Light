@@ -5,6 +5,7 @@ import java.io.File;
 /**
  * 情景添加和修改请求参数
  */
+@Deprecated
 public class SceneRequest {
 
     public int sceneAddress;

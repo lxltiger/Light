@@ -145,22 +145,6 @@ public class HomeFragment extends Fragment {
 
 
     private void subscribeUI(HomeViewModel homeViewModel) {
-        homeViewModel.sceneListObserver.observe(this, new Observer<Resource<List<Scene>>>() {
-            @Override
-            public void onChanged(@Nullable Resource<List<Scene>> listResource) {
-                if (null != listResource.data) {
-                    int size = listResource.data.size();
-                    bindingDetail.get().setShowScene(size > 0);
-                    if (size > 0) {
-                        //最多显示三个
-                        sceneAdapter.addScenes(listResource.data.subList(0, Math.min(size, 3)));
-                    }
-                } else {
-                    bindingDetail.get().setShowScene(false);
-
-                }
-            }
-        });
 
     }
 

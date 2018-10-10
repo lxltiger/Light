@@ -3,7 +3,6 @@ package com.kimascend.light.repository;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -11,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.SparseIntArray;
 
 import com.kimascend.light.api.ApiResponse;
 import com.kimascend.light.api.KimAscendService;
@@ -27,6 +27,7 @@ import com.kimascend.light.common.NetWorkBoundResource;
 import com.kimascend.light.common.RequestCreator;
 import com.kimascend.light.database.GroupDao;
 import com.kimascend.light.database.LampDao;
+import com.kimascend.light.database.SceneDao;
 import com.kimascend.light.database.SmartLightDataBase;
 import com.kimascend.light.database.UserDao;
 import com.kimascend.light.device.entity.AddHubRequest;
@@ -47,7 +48,6 @@ import com.kimascend.light.scene.AddGroupSceneResult;
 import com.kimascend.light.scene.DeviceSetting;
 import com.kimascend.light.scene.GroupDevice;
 import com.kimascend.light.scene.GroupRequest;
-import com.kimascend.light.scene.GroupSceneRequest;
 import com.kimascend.light.scene.Scene;
 import com.kimascend.light.scene.SceneList;
 import com.kimascend.light.scene.SceneRequest;
@@ -57,7 +57,6 @@ import com.telink.bluetooth.light.OnlineStatusNotificationParser;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -84,6 +83,7 @@ public class HomeRepository {
     private final UserDao userDao;
     private final LampDao lampDao;
     private final GroupDao groupDao;
+    private final SceneDao sceneDao;
     private final AppExecutors executors;
 
 
@@ -91,7 +91,8 @@ public class HomeRepository {
         mDataBase = SmartLightDataBase.INSTANCE(context);
         userDao = mDataBase.user();
         lampDao = mDataBase.lamp();
-        groupDao=mDataBase.group();
+        groupDao = mDataBase.group();
+        sceneDao = mDataBase.scene();
         kimService = NetWork.kimService();
         executors = SmartLightApp.INSTANCE().appExecutors();
     }
@@ -142,23 +143,6 @@ public class HomeRepository {
 
     }
 
-    /**
-     * @param request 创建场景或情景的参数
-     * @return
-     */
-    @Deprecated
-    public LiveData<ApiResponse<AddGroupSceneResult>> createGroup(GroupSceneRequest request) {
-        String id = getMeshId();
-        ArrayMap<String, String> map = new ArrayMap<>();
-        map.put("name", request.name);
-        map.put("meshId", id);
-        RequestBody requestFile = RequestBody.create(RequestCreator.MEDIATYPE, request.pic);
-        // MultipartBody.Part用来发送真实的文件名
-        MultipartBody.Part icon =
-                MultipartBody.Part.createFormData("pic", request.pic.getName(), requestFile);
-        return request.isGroup ? kimService.createGroup(icon, map) : kimService.createScene(icon, map);
-
-    }
 
     /**
      * 分两步
@@ -503,26 +487,6 @@ public class HomeRepository {
                 }
             }
         });
-    }
-
-
-    //    更新场景 情景
-
-    @Deprecated
-    public LiveData<ApiResponse<AddGroupSceneResult>> updateGroupScene(GroupSceneRequest addGroup) {
-        String id = getMeshId();
-        boolean isGroup = addGroup.isGroup;
-        ArrayMap<String, String> map = new ArrayMap<>();
-        map.put("name", addGroup.name);
-        map.put(isGroup ? "groupId" : "sceneId", isGroup ? addGroup.groupId : addGroup.sceneId);
-        map.put("meshId", id);
-        if (null != addGroup.pic) {
-            RequestBody requestFile = RequestBody.create(RequestCreator.MEDIATYPE, addGroup.pic);
-            MultipartBody.Part icon = MultipartBody.Part.createFormData("pic", addGroup.pic.getName(), requestFile);
-            return isGroup ? kimService.updateGroup(icon, map) : kimService.updateScene(icon, map);
-        } else {
-            return isGroup ? kimService.updateGroup(map) : kimService.updateScene(map);
-        }
     }
 
 
@@ -1051,7 +1015,11 @@ public class HomeRepository {
 
     }
 
-    public LiveData<List<Lamp>> loadGroupDeviceList(Group group) {
+    /**
+     * @param selectedDeviceIdList 已选择的设备Id集合，Id为Mesh Address
+     * @return
+     */
+    public LiveData<List<Lamp>> loadDeviceListWithMark(final List<Integer> selectedDeviceIdList) {
         MediatorLiveData<List<Lamp>> mediatorLiveData = new MediatorLiveData<>();
         String meshId = getMeshId();
         LiveData<List<Lamp>> local = lampDao.loadDevices(meshId);
@@ -1059,10 +1027,36 @@ public class HomeRepository {
             @Override
             public void onChanged(List<Lamp> lamps) {
                 mediatorLiveData.removeSource(local);
-                List<Integer> deviceIds = group.getDeviceIdList();
                 if (lamps != null) {
                     for (Lamp lamp : lamps) {
-                        if (deviceIds.contains(lamp.getDevice_id())) {
+                        if (selectedDeviceIdList.contains(lamp.getDevice_id())) {
+                            lamp.lampStatus.set(BindingAdapters.LIGHT_SELECTED);
+                        } else {
+                            lamp.lampStatus.set(BindingAdapters.LIGHT_HIDE);
+                        }
+                    }
+                }
+                mediatorLiveData.setValue(lamps);
+            }
+        });
+
+        return mediatorLiveData;
+    }
+
+
+    public LiveData<List<Lamp>> loadDeviceListWithStatus(final SparseIntArray setting) {
+        MediatorLiveData<List<Lamp>> mediatorLiveData = new MediatorLiveData<>();
+        String meshId = getMeshId();
+        LiveData<List<Lamp>> local = lampDao.loadDevices(meshId);
+        mediatorLiveData.addSource(local, new Observer<List<Lamp>>() {
+            @Override
+            public void onChanged(List<Lamp> lamps) {
+                mediatorLiveData.removeSource(local);
+                if (lamps != null) {
+                    for (Lamp lamp : lamps) {
+                        int brightness=setting.get(lamp.getDevice_id(), -100);
+                        lamp.onOff.set(brightness > 0);
+                        if (brightness!=-100) {
                             lamp.lampStatus.set(BindingAdapters.LIGHT_SELECTED);
                         } else {
                             lamp.lampStatus.set(BindingAdapters.LIGHT_HIDE);
@@ -1681,11 +1675,8 @@ public class HomeRepository {
     }
 
 
-    // FIXME: 2018/10/9 0009 不靠谱
     public int getGroupNum() {
-
         return groupDao.getGroupRowId();
-
     }
 
     public void addUpdateGroup(Group group) {
@@ -1698,5 +1689,22 @@ public class HomeRepository {
 
     public void deleteGroup(Group group) {
         groupDao.deleteGroup(group);
+    }
+
+
+    public int getMaxSceneId() {
+        return sceneDao.getMaxSceneId();
+    }
+
+    public void addUpdateScene(Scene scene) {
+        sceneDao.insert(scene);
+    }
+
+    public LiveData<List<Scene>> getSceneList() {
+        return sceneDao.loadAllScene();
+    }
+
+    public void deleteScene(Scene scene) {
+        sceneDao.delete(scene);
     }
 }

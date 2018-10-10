@@ -21,7 +21,6 @@ import com.kimascend.light.databinding.FragmentEditBinding;
 @Deprecated
 public class EditFragment extends Fragment implements CallBack {
     public static final String TAG = EditFragment.class.getSimpleName();
-    private GroupSceneViewModel viewModel;
     private FragmentEditBinding binding;
 
 
@@ -46,9 +45,6 @@ public class EditFragment extends Fragment implements CallBack {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        viewModel = ViewModelProviders.of(getActivity()).get(GroupSceneViewModel.class);
-        String name = viewModel.name;
-        binding.setName(name);
     }
 
     @Override
@@ -64,7 +60,6 @@ public class EditFragment extends Fragment implements CallBack {
                     binding.content.requestFocus();
                     return;
                 }
-                viewModel.name=name;
                 getActivity().onBackPressed();
                 break;
             case R.id.iv_clear:

@@ -7,27 +7,20 @@ import android.support.v7.app.AppCompatActivity;
 import com.kimascend.light.clock.Clock;
 import com.kimascend.light.clock.ClockFragment;
 import com.kimascend.light.clock.ClockListFragment;
+import com.kimascend.light.clock.SelectedLampListFragment;
 import com.kimascend.light.device.AddDeviceFragment;
 import com.kimascend.light.device.AddHubFragment;
 import com.kimascend.light.device.AddLampFragment;
-import com.kimascend.light.device.GroupControlFragment;
-import com.kimascend.light.device.LightSettingFragment;
 import com.kimascend.light.home.DeviceListFragment;
 import com.kimascend.light.home.GroupListFragment;
 import com.kimascend.light.home.HomeFragment;
 import com.kimascend.light.home.MoreFragment;
-import com.kimascend.light.home.entity.Group;
 import com.kimascend.light.mesh.AddMeshFragment;
 import com.kimascend.light.mesh.DefaultMesh;
 import com.kimascend.light.mesh.MeshDetailFragment;
 import com.kimascend.light.mesh.MeshListFragment;
 import com.kimascend.light.scene.EditFragment;
-import com.kimascend.light.scene.GroupFragment2;
-import com.kimascend.light.group.LampListDialogFragment;
-import com.kimascend.light.scene.Scene;
-import com.kimascend.light.scene.SceneFragment;
-import com.kimascend.light.scene.SceneListFragment;
-import com.kimascend.light.scene.SelectedLampListFragment;
+import com.kimascend.light.home.SceneListFragment;
 import com.kimascend.light.user.AboutUSFragment;
 import com.kimascend.light.user.FeedBackFragment;
 import com.kimascend.light.user.SettingFragment;
@@ -104,18 +97,7 @@ public class NavigatorController {
                 .commitAllowingStateLoss();
     }
 
-    public void navigateToLampSetting(Bundle bundle) {
-        fm.beginTransaction()
-                .replace(container, LightSettingFragment.newInstance(bundle), LightSettingFragment.TAG)
-                .commitAllowingStateLoss();
-    }
 
-
-    public void navigateToGroupControl(Bundle args) {
-        fm.beginTransaction()
-                .replace(container, GroupControlFragment.newInstance(args), GroupControlFragment.TAG)
-                .commitAllowingStateLoss();
-    }
 
     public void navigateToGroup() {
         fm.beginTransaction()
@@ -143,11 +125,7 @@ public class NavigatorController {
                 .commitAllowingStateLoss();
     }
 
-    public void navigateToGroup(Group group) {
-        fm.beginTransaction()
-                .replace(container, GroupFragment2.newInstance(group), GroupFragment2.TAG)
-                .commitAllowingStateLoss();
-    }
+
 
     public void navigateToEditName() {
         fm.beginTransaction()
@@ -174,12 +152,7 @@ public class NavigatorController {
                 .commitAllowingStateLoss();
     }
 
-    public void navigateToScene(Scene scene) {
-        fm.beginTransaction()
-                .replace(container, SceneFragment.newInstance(scene), SceneFragment.TAG)
-                .addToBackStack(null)
-                .commitAllowingStateLoss();
-    }
+
 
     public void navigateToMore() {
         fm.beginTransaction()

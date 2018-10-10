@@ -132,12 +132,7 @@ public class LampListDialogFragment extends BottomSheetDialogFragment  {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        viewModel.lampsObserver.observe(this, new Observer<List<Lamp>>() {
-            @Override
-            public void onChanged(@Nullable List<Lamp> lamps) {
-                lampAdapter.addLamps(lamps);
-            }
-        });
+        viewModel.lampsObserver.observe(this, lamps -> lampAdapter.addLamps(lamps));
 
     }
 

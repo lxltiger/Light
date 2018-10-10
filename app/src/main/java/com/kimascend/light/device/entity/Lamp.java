@@ -2,6 +2,7 @@ package com.kimascend.light.device.entity;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
+import android.databinding.ObservableBoolean;
 import android.databinding.ObservableInt;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -43,6 +44,8 @@ public class Lamp implements Parcelable {
     public boolean isSetting=false;
     @Ignore
     public ObservableInt lampStatus = new ObservableInt(BindingAdapters.LIGHT_OFF);
+    @Ignore
+    public ObservableBoolean onOff = new ObservableBoolean();
 
     private Lamp(int device_id, int productUuid, String name, String mac, String meshId) {
         this.device_id = device_id;
@@ -158,6 +161,8 @@ public class Lamp implements Parcelable {
     public void setProductUuid(int productUuid) {
         this.productUuid = productUuid;
     }
+
+
 
 
     public Lamp() {

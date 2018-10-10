@@ -22,12 +22,12 @@ public class LampForSceneAdapter extends RecyclerView.Adapter<LampForSceneAdapte
 
     private List<Lamp> mLampList;
 
-    private final OnHandleLampListener mOnHandleLampListener;
+    private final OnSceneSettingListener onSceneSettingListener;
 
 
 
-    public LampForSceneAdapter(OnHandleLampListener handleLampListener) {
-        mOnHandleLampListener = handleLampListener;
+    public LampForSceneAdapter(OnSceneSettingListener onSceneSettingListener) {
+        this.onSceneSettingListener = onSceneSettingListener;
         mLampList = new ArrayList<>();
     }
 
@@ -65,7 +65,7 @@ public class LampForSceneAdapter extends RecyclerView.Adapter<LampForSceneAdapte
     @Override
     public LampForSceneAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ItemLampForSceneBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.item_lamp_for_scene, parent, false);
-        binding.setHandler(mOnHandleLampListener);
+        binding.setHandler(onSceneSettingListener);
         return new LampForSceneAdapter.ViewHolder(binding);
     }
 
