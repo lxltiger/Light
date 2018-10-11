@@ -13,7 +13,6 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.kimascend.light.R;
-import com.kimascend.light.common.BindingAdapters;
 import com.kimascend.light.common.SingleLiveEvent;
 import com.kimascend.light.common.SnackbarMessage;
 import com.kimascend.light.device.entity.Lamp;

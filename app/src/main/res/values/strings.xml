@@ -254,6 +254,8 @@
     <string name="lack_icon">还没有设置图片</string>
     <string name="lack_lamps">还没有选择灯具</string>
     <string name="empty_lamps">灯具列表为空</string>
+    <string name="lack_time_setting">时间没有设定</string>
+    <string name="lack_week_day">周期没有设定</string>
 
 
 </resources>

@@ -4,6 +4,7 @@ package com.kimascend.light.repository;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.persistence.room.Dao;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,7 +25,9 @@ import com.kimascend.light.clock.ClockRequest;
 import com.kimascend.light.clock.ClockResult;
 import com.kimascend.light.common.BindingAdapters;
 import com.kimascend.light.common.NetWorkBoundResource;
+import com.kimascend.light.common.Predicate;
 import com.kimascend.light.common.RequestCreator;
+import com.kimascend.light.database.ClockDao;
 import com.kimascend.light.database.GroupDao;
 import com.kimascend.light.database.LampDao;
 import com.kimascend.light.database.SceneDao;
@@ -57,6 +60,7 @@ import com.telink.bluetooth.light.OnlineStatusNotificationParser;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -84,6 +88,7 @@ public class HomeRepository {
     private final LampDao lampDao;
     private final GroupDao groupDao;
     private final SceneDao sceneDao;
+    private final ClockDao clockDao;
     private final AppExecutors executors;
 
 
@@ -93,6 +98,7 @@ public class HomeRepository {
         lampDao = mDataBase.lamp();
         groupDao = mDataBase.group();
         sceneDao = mDataBase.scene();
+        clockDao = mDataBase.clock();
         kimService = NetWork.kimService();
         executors = SmartLightApp.INSTANCE().appExecutors();
     }
@@ -1019,7 +1025,7 @@ public class HomeRepository {
      * @param selectedDeviceIdList 已选择的设备Id集合，Id为Mesh Address
      * @return
      */
-    public LiveData<List<Lamp>> loadDeviceListWithMark(final List<Integer> selectedDeviceIdList) {
+    public LiveData<List<Lamp>> loadDeviceListWithMark(List<Integer> selectedDeviceIdList) {
         MediatorLiveData<List<Lamp>> mediatorLiveData = new MediatorLiveData<>();
         String meshId = getMeshId();
         LiveData<List<Lamp>> local = lampDao.loadDevices(meshId);
@@ -1027,7 +1033,7 @@ public class HomeRepository {
             @Override
             public void onChanged(List<Lamp> lamps) {
                 mediatorLiveData.removeSource(local);
-                if (lamps != null) {
+                if (lamps != null&&selectedDeviceIdList!=null) {
                     for (Lamp lamp : lamps) {
                         if (selectedDeviceIdList.contains(lamp.getDevice_id())) {
                             lamp.lampStatus.set(BindingAdapters.LIGHT_SELECTED);
@@ -1044,6 +1050,32 @@ public class HomeRepository {
     }
 
 
+    public LiveData<List<Lamp>> loadDeviceList(Predicate<Lamp> predicate) {
+        MediatorLiveData<List<Lamp>> mediatorLiveData = new MediatorLiveData<>();
+        String meshId = getMeshId();
+        LiveData<List<Lamp>> local = lampDao.loadDevices(meshId);
+        mediatorLiveData.addSource(local, new Observer<List<Lamp>>() {
+            @Override
+            public void onChanged(List<Lamp> lamps) {
+                mediatorLiveData.removeSource(local);
+                if (lamps != null&&predicate!=null) {
+                    for (Lamp lamp : lamps) {
+                        if (predicate.test(lamp)) {
+                            lamp.lampStatus.set(BindingAdapters.LIGHT_SELECTED);
+                        } else {
+                            lamp.lampStatus.set(BindingAdapters.LIGHT_HIDE);
+                        }
+                    }
+                }
+                mediatorLiveData.setValue(lamps);
+            }
+        });
+
+        return mediatorLiveData;
+    }
+
+
+//    情景设置使用
     public LiveData<List<Lamp>> loadDeviceListWithStatus(final SparseIntArray setting) {
         MediatorLiveData<List<Lamp>> mediatorLiveData = new MediatorLiveData<>();
         String meshId = getMeshId();
@@ -1706,5 +1738,17 @@ public class HomeRepository {
 
     public void deleteScene(Scene scene) {
         sceneDao.delete(scene);
+    }
+
+    public void addUpdateClock(Clock clock) {
+        clockDao.insert(clock);
+    }
+
+    public LiveData<List<Clock>> getClockList() {
+        return clockDao.loadAllClock();
+    }
+
+    public void deleteClock(Clock clock) {
+        clockDao.delete(clock);
     }
 }

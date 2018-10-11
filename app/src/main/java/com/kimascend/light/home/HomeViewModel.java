@@ -14,10 +14,10 @@ import com.kimascend.light.R;
 import com.kimascend.light.api.ApiResponse;
 import com.kimascend.light.api.Resource;
 import com.kimascend.light.app.SmartLightApp;
+import com.kimascend.light.clock.Clock;
 import com.kimascend.light.common.SnackbarMessage;
 import com.kimascend.light.device.entity.Lamp;
 import com.kimascend.light.home.entity.Group;
-import com.kimascend.light.home.entity.GroupList;
 import com.kimascend.light.home.entity.Hub;
 import com.kimascend.light.home.entity.HubList;
 import com.kimascend.light.mesh.DefaultMesh;
@@ -26,12 +26,12 @@ import com.kimascend.light.repository.HomeRepository;
 import com.kimascend.light.scene.Scene;
 import com.kimascend.light.sevice.TelinkLightService;
 import com.kimascend.light.utils.LightCommandUtils;
-import com.kimascend.light.utils.ToastUtil;
 import com.telink.bluetooth.event.DeviceEvent;
 import com.telink.bluetooth.event.MeshEvent;
 import com.telink.bluetooth.event.NotificationEvent;
 import com.telink.bluetooth.event.ServiceEvent;
 import com.telink.bluetooth.light.DeviceInfo;
+import com.telink.bluetooth.light.GetAlarmNotificationParser;
 import com.telink.bluetooth.light.LeAutoConnectParameters;
 import com.telink.bluetooth.light.LeRefreshNotifyParameters;
 import com.telink.bluetooth.light.LightAdapter;
@@ -70,21 +70,17 @@ public class HomeViewModel extends AndroidViewModel {
     public final MutableLiveData<Hub> deleteHubRequest = new MutableLiveData<>();
     public final LiveData<Resource<Hub>> deleteHubObserver;
 
-    // 场景列表请求
-    public MutableLiveData<Integer> groupListRequest = new MutableLiveData<>();
-    //场景列表监听
-//    public final LiveData<ApiResponse<GroupList>> groupListObserver;
 
     //情景列表
     public final MutableLiveData<Integer> sceneListRequest = new MutableLiveData<>();
-//    public final LiveData<Resource<List<Scene>>> sceneListObserver;
 
 
     public final MutableLiveData<Integer> userInfoRequest = new MutableLiveData<>();
     public final LiveData<User> userInfoObserver;
 
-     final LiveData<List<Group>> groupListObserver;
-     final LiveData<List<Scene>> sceneListObserver;
+    final LiveData<List<Group>> groupListObserver;
+    final LiveData<List<Scene>> sceneListObserver;
+    final LiveData<List<Clock>> clockListObserver;
 
     SnackbarMessage snackbarMessage = new SnackbarMessage();
     private Handler handler;
@@ -109,7 +105,7 @@ public class HomeViewModel extends AndroidViewModel {
 
         groupListObserver = repository.getGroupList();
         sceneListObserver = repository.getSceneList();
-
+        clockListObserver = repository.getClockList();
     }
 
     void callBack(Event<String> event) {
@@ -124,12 +120,20 @@ public class HomeViewModel extends AndroidViewModel {
                 NotificationEvent notificationEvent = (NotificationEvent) event;
                 Calendar calendar = (Calendar) notificationEvent.parse();
                 if (Math.abs(Calendar.getInstance().getTimeInMillis() - calendar.getTimeInMillis()) > 60 * 1000) {
+                    Log.d(TAG, "syn time");
                     LightCommandUtils.synLampTime();
                 }
                 String format = DateFormat.getDateTimeInstance().format(calendar.getTimeInMillis());
                 Log.d(TAG, format);
                 break;
             }
+            case NotificationEvent.GET_ALARM: {
+                NotificationEvent notificationEvent = (NotificationEvent) event;
+                GetAlarmNotificationParser.AlarmInfo alarmInfo = (GetAlarmNotificationParser.AlarmInfo) notificationEvent.parse();
+                Log.d(TAG, "alarmInfo:" + alarmInfo);
+            }
+
+            break;
             case MeshEvent.OFFLINE:
                 SmartLightApp.INSTANCE().setMeshStatus(-1);
                 repository.updateMeshStatus(-1);
@@ -174,6 +178,7 @@ public class HomeViewModel extends AndroidViewModel {
                 SmartLightApp.INSTANCE().setMeshStatus(LightAdapter.STATUS_LOGIN);
                 handler.removeCallbacksAndMessages(null);
                 handler.postDelayed(LightCommandUtils::getLampTime, 3 * 1000);
+                LightCommandUtils.getAlarm();
                 break;
             case LightAdapter.STATUS_CONNECTING:
                 SmartLightApp.INSTANCE().setMeshStatus(LightAdapter.STATUS_CONNECTING);
@@ -188,7 +193,7 @@ public class HomeViewModel extends AndroidViewModel {
         }
     }
 
-     void autoConnect() {
+    void autoConnect() {
         Log.d(TAG, "autoConnect() called");
         if (TelinkLightService.Instance() != null) {
             if (TelinkLightService.Instance().getMode() != LightAdapter.MODE_AUTO_CONNECT_MESH) {
@@ -223,5 +228,13 @@ public class HomeViewModel extends AndroidViewModel {
     protected void onCleared() {
         super.onCleared();
         handler.removeCallbacksAndMessages(null);
+    }
+
+    public void deleteClick(Clock clock) {
+        repository.deleteClock(clock);
+    }
+
+    public void switchClock(Clock clock) {
+
     }
 }

@@ -36,8 +36,7 @@
                 android:layout_height="48dp"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="8dp"
-                app:clockIcon="@{clock.type}"
-                tools:background="@drawable/icon_light" />
+                android:background="@drawable/icon_light" />
 
 
             <TextView

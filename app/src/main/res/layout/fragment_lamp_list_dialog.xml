@@ -41,8 +41,9 @@
                 android:layout_height="36dp"
                 android:layout_gravity="end"
                 android:layout_marginEnd="8dp"
+                android:visibility="gone"
                 app:srcCompat="@drawable/ic_check"
-                android:onClick="@{listener::onClick}" />
+                 />
         </android.support.v7.widget.Toolbar>
 
         <android.support.v7.widget.RecyclerView

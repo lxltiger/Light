@@ -7,6 +7,7 @@ import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 
+import com.kimascend.light.clock.Clock;
 import com.kimascend.light.device.entity.Lamp;
 import com.kimascend.light.home.entity.Group;
 import com.kimascend.light.mesh.Mesh;
@@ -21,7 +22,7 @@ import com.kimascend.light.user.Profile;
  *
  *  如果在Dao中使用了某个字段， 如果识别不了，需要加上ColumnInfo注解
  */
-@Database(entities = {Lamp.class, Profile.class,Mesh.class, Scene.class,Group.class}, version = 7, exportSchema = false)
+@Database(entities = {Lamp.class, Profile.class,Mesh.class, Scene.class,Group.class,Clock.class}, version = 8, exportSchema = false)
 public abstract class SmartLightDataBase extends RoomDatabase {
 
     private static final String DATABASE_NAME = "SmartLight.db";
@@ -31,12 +32,13 @@ public abstract class SmartLightDataBase extends RoomDatabase {
     public abstract UserDao user();
     public abstract GroupDao group();
     public abstract SceneDao scene();
+    public abstract ClockDao clock();
 
     public synchronized static SmartLightDataBase INSTANCE(Context context) {
         if (sDataBase == null) {
             sDataBase = Room.databaseBuilder(context.getApplicationContext(), SmartLightDataBase.class, DATABASE_NAME)
                     .allowMainThreadQueries()
-                    .addMigrations(MIGRATION_3_4,MIGRATION_4_5,MIGRATION_5_6,MIGRATION_6_7)
+                    .addMigrations(MIGRATION_3_4,MIGRATION_4_5,MIGRATION_5_6,MIGRATION_6_7,MIGRATION_7_8)
 //                    .fallbackToDestructiveMigration()
                     .build();
         }
@@ -71,6 +73,14 @@ public abstract class SmartLightDataBase extends RoomDatabase {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE scene ADD COLUMN deviceIds text");
+        }
+    };
+
+    private static final Migration MIGRATION_7_8 = new Migration(7, 8) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS `Clock` (`id` TEXT NOT NULL, `isOpen` INTEGER NOT NULL, `deviceId` INTEGER NOT NULL, `name` TEXT, `on` INTEGER NOT NULL, `cycle` TEXT, `hour` INTEGER NOT NULL, `min` INTEGER NOT NULL, `time` TEXT, `cronTime` TEXT, `repeat` TEXT, PRIMARY KEY(`id`))");
+
         }
     };
 }

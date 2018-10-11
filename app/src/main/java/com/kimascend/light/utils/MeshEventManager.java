@@ -121,6 +121,7 @@ public class MeshEventManager {
         private void addEventListener() {
             application.addEventListener(DeviceEvent.STATUS_CHANGED, listener);
             application.addEventListener(NotificationEvent.GET_TIME, listener);
+            application.addEventListener(NotificationEvent.GET_ALARM, listener);
             application.addEventListener(NotificationEvent.ONLINE_STATUS, listener);
             application.addEventListener(ServiceEvent.SERVICE_CONNECTED, listener);
             application.addEventListener(ServiceEvent.SERVICE_DISCONNECTED, listener);

@@ -6,17 +6,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.google.gson.Gson;
 import com.kimascend.light.R;
 import com.kimascend.light.databinding.ItemLampForSceneBinding;
 import com.kimascend.light.device.entity.Lamp;
-import com.kimascend.light.home.OnHandleLampListener;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 已选的灯具适配器 不需要更新状态 能侧啥删除
+ * 场景中灯具设置适配器
  */
 public class LampForSceneAdapter extends RecyclerView.Adapter<LampForSceneAdapter.ViewHolder> {
 

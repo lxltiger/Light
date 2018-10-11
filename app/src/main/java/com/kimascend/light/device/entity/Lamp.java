@@ -43,7 +43,7 @@ public class Lamp implements Parcelable {
     @Ignore
     public boolean isSetting=false;
     @Ignore
-    public ObservableInt lampStatus = new ObservableInt(BindingAdapters.LIGHT_OFF);
+    public ObservableInt lampStatus = new ObservableInt(BindingAdapters.LIGHT_HIDE);
     @Ignore
     public ObservableBoolean onOff = new ObservableBoolean();
 

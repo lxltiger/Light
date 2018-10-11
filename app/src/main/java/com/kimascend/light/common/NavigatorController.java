@@ -1,13 +1,11 @@
 package com.kimascend.light.common;
 
-import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.kimascend.light.clock.Clock;
 import com.kimascend.light.clock.ClockFragment;
-import com.kimascend.light.clock.ClockListFragment;
-import com.kimascend.light.clock.SelectedLampListFragment;
+import com.kimascend.light.home.ClockListFragment;
 import com.kimascend.light.device.AddDeviceFragment;
 import com.kimascend.light.device.AddHubFragment;
 import com.kimascend.light.device.AddLampFragment;
@@ -120,7 +118,7 @@ public class NavigatorController {
     /*闹钟的添加和编辑*/
     public void navigateToClock(Clock clock) {
         fm.beginTransaction()
-                .replace(container, ClockFragment.newInstance(clock), ClockFragment.TAG)
+                .replace(container, ClockFragment.newInstance(), ClockFragment.TAG)
                 .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
@@ -135,22 +133,6 @@ public class NavigatorController {
     }
 
 
-
-
-    public void navigateToSelectedLamps() {
-        fm.beginTransaction()
-                .replace(container, SelectedLampListFragment.newInstance(), SelectedLampListFragment.TAG)
-                .addToBackStack(null)
-                .commitAllowingStateLoss();
-    }
-
-//    闹钟已选择灯具
-    public void navigateToClockSelectedLamps() {
-        fm.beginTransaction()
-                .replace(container, com.kimascend.light.clock.SelectedLampListFragment.newInstance(), SelectedLampListFragment.TAG)
-                .addToBackStack(null)
-                .commitAllowingStateLoss();
-    }
 
 
 

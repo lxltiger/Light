@@ -36,6 +36,7 @@ public class Scene implements Parcelable {
     private String meshName;
     private String name;
     private int sceneId;
+    //以键值对形式存储情景设置
     private String deviceIds = "";
 
 

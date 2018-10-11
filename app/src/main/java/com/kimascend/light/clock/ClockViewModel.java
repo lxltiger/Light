@@ -3,106 +3,89 @@ package com.kimascend.light.clock;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MediatorLiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.Transformations;
 import android.databinding.ObservableBoolean;
+import android.databinding.ObservableField;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.util.Log;
 
-import com.kimascend.light.api.ApiResponse;
+import com.kimascend.light.R;
+import com.kimascend.light.common.SingleLiveEvent;
+import com.kimascend.light.common.SnackbarMessage;
 import com.kimascend.light.device.entity.Lamp;
-import com.kimascend.light.model.RequestResult;
 import com.kimascend.light.repository.HomeRepository;
-import com.kimascend.light.common.BindingAdapters;
+import com.kimascend.light.utils.LightCommandUtils;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import static com.kimascend.light.utils.ToastUtil.showToast;
 
 public class ClockViewModel extends AndroidViewModel {
     private HomeRepository repository;
-
-    /**
-     * lamp列表请求 如果Clockid不为空从中标记已选择的灯具，此方法暂不支持分页
-     */
-    public MutableLiveData<String> lampListRequest = new MutableLiveData<>();
-    // lamp列表监听
-    public final LiveData<List<Lamp>> lampListObserver;
-
-    // 添加改闹钟请求
-    public MutableLiveData<ClockRequest> clockRequest = new MutableLiveData<>();
-    public final LiveData<ClockResult> clockObserver;
-
-    // 创建修改闹钟请求
-    public MutableLiveData<ClockRequest> updateClockRequest = new MutableLiveData<>();
-    public final LiveData<ClockRequest> updateClockObserver;
-
-    public final ObservableBoolean isLoading = new ObservableBoolean(false);
-
-
-    public final MutableLiveData<Integer> clockListRequest = new MutableLiveData<>();
-    public final LiveData<ApiResponse<ClockList>> clockListObserver;
-
-    public final MediatorLiveData<Clock> deleteClockObserver = new MediatorLiveData<>();
-    public final MediatorLiveData<Clock> switchClockObserver = new MediatorLiveData<>();
+    private Clock clock;
+    public ObservableField<String> title = new ObservableField<>();
+    public ObservableBoolean edit = new ObservableBoolean();
+    //灯具开关状态
+    public ObservableBoolean on = new ObservableBoolean();
+    SingleLiveEvent<Void> completeEvent = new SingleLiveEvent<>();
+    public LiveData<List<Lamp>> lampsObserver;
+    SnackbarMessage snackbarMessage;
 
     public ClockViewModel(@NonNull Application application) {
         super(application);
         repository = HomeRepository.INSTANCE(application);
-        lampListObserver = Transformations.switchMap(lampListRequest, repository::loadLampsForClock);
-
-        clockListObserver = Transformations.switchMap(clockListRequest, repository::getClockList);
-
-        clockObserver = Transformations.switchMap(clockRequest, repository::addClock);
-
-        updateClockObserver = Transformations.switchMap(updateClockRequest, repository::updateClockAndDevice);
+        snackbarMessage = new SnackbarMessage();
 
     }
 
-
-    public void deleteClick(Clock clock) {
-        LiveData<ApiResponse<RequestResult>> responseLiveData = repository.deleteClock(clock.getId());
-        deleteClockObserver.addSource(responseLiveData, new Observer<ApiResponse<RequestResult>>() {
-            @Override
-            public void onChanged(@Nullable ApiResponse<RequestResult> apiResponse) {
-                deleteClockObserver.removeSource(responseLiveData);
-                if (apiResponse.isSuccessful() && apiResponse.body.succeed()) {
-                    deleteClockObserver.setValue(clock);
-                } else {
-                    deleteClockObserver.setValue(null);
-                }
-            }
-        });
+    public Clock getClock() {
+        return clock;
     }
 
-    public void switchClock(Clock clock) {
-        LiveData<ApiResponse<RequestResult>> responseLiveData = repository.switchClock(clock);
-        switchClockObserver.addSource(responseLiveData, new Observer<ApiResponse<RequestResult>>() {
-            @Override
-            public void onChanged(@Nullable ApiResponse<RequestResult> apiResponse) {
-                switchClockObserver.removeSource(responseLiveData);
-                if (apiResponse.isSuccessful() && apiResponse.body.succeed()) {
-                    clock.setIsOpen(1 - clock.getIsOpen());
-                    switchClockObserver.setValue(clock);
-                } else {
-                    switchClockObserver.setValue(null);
-                }
-            }
-        });
+
+    void loadClock(Clock clock) {
+        this.clock = clock;
+        edit.set(clock.getDeviceId() > 0);
+        title.set(edit.get() ? "修改闹钟" : "新建闹钟");
+        on.set(clock.isOn());
+        lampsObserver = repository.loadDeviceList(lamp -> clock.getDeviceId() == lamp.getDevice_id());
     }
 
-    //获取选中设备的id
-    public List<String> getSelectedLampIds() {
-        List<String> deviceIds = new ArrayList<>();
-        List<Lamp> allLamps = lampListObserver.getValue();
-        if (allLamps != null) {
-            for (Lamp lamp : allLamps) {
-                if (BindingAdapters.LIGHT_SELECTED == lamp.lampStatus.get()) {
-                    deviceIds.add(lamp.getId());
-                }
-            }
+    public void setTime(int hour, int min) {
+        clock.setHour(hour);
+        clock.setMin(min);
+        clock.setTime(String.format("%s:%s", hour, min));
+
+    }
+
+    void addEditClock() {
+        if (clock.getHour() < 0) {
+            snackbarMessage.setValue(R.string.lack_time_setting);
+            return;
         }
-        return deviceIds;
+
+        if (clock.getDeviceId() < 0) {
+            snackbarMessage.setValue(R.string.lack_lamps);
+            return;
+        }
+
+        if (TextUtils.isEmpty(clock.getRepeat())) {
+            snackbarMessage.setValue(R.string.lack_week_day);
+            return;
+        }
+        clock.setOn(on.get());
+        LightCommandUtils.addAlarm(on.get(), clock.getDeviceId(), clock.getHour(), clock.getMin());
+
+        repository.addUpdateClock(clock);
+        completeEvent.call();
+
+    }
+
+    void setWeek(String weekDays) {
+        clock.setRepeat(weekDays);
+    }
+
+    void markLamp(Lamp lamp) {
+        clock.setDeviceId(lamp.getDevice_id());
     }
 }

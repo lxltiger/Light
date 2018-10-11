@@ -1,40 +1,55 @@
 package com.kimascend.light.clock;
 
+import android.arch.persistence.room.Entity;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import java.util.Objects;
+import java.util.UUID;
 
-public class Clock implements Parcelable{
+@Entity(primaryKeys = "id")
+public class Clock implements Parcelable {
 
 
-    /**
-     * isOpen : 1
-     * clockId : 32840
-     * name : openClock
-     * id : 5eac3fc6405f4dfc9775a94884cf6679
-     * type : 1
-     * cycle : 0 13 14 ? * 2,3,4
-     */
-
-    private int isOpen;
-    private int clockId;
-    private String name;
+    @NonNull
     private String id;
-    private int type;
+    private int isOpen;
+    private int deviceId;
+    private String name;
+    private boolean on;
     private String cycle;
+    private int hour;
+    private int min;
     //用来显示
-    public String time="";
-//    用来设置闹钟的格式
-    public String cronTime="";
-    public String repeat="";
+    private String time = "";
+    //    用来设置闹钟的格式
+    public String cronTime = "";
+    private String repeat = "";
 
     public Clock() {
+        deviceId = -1;
+        isOpen=1;
+        id = UUID.randomUUID().toString();
     }
 
 
+    public int getHour() {
+        return hour;
+    }
 
+    public void setHour(int hour) {
+        this.hour = hour;
+    }
+
+    public int getMin() {
+        return min;
+    }
+
+    public void setMin(int min) {
+        this.min = min;
+    }
 
     public int getIsOpen() {
         return isOpen;
@@ -44,12 +59,21 @@ public class Clock implements Parcelable{
         this.isOpen = isOpen;
     }
 
-    public int getClockId() {
-        return clockId;
+    public String getTime() {
+        return time;
     }
 
-    public void setClockId(int clockId) {
-        this.clockId = clockId;
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public int getDeviceId() {
+        return deviceId;
+
+    }
+
+    public void setDeviceId(int deviceId) {
+        this.deviceId = deviceId;
     }
 
     public String getName() {
@@ -68,12 +92,12 @@ public class Clock implements Parcelable{
         this.id = id;
     }
 
-    public int getType() {
-        return type;
+    public boolean isOn() {
+        return on;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setOn(boolean on) {
+        this.on = on;
     }
 
     public String getCycle() {
@@ -84,38 +108,50 @@ public class Clock implements Parcelable{
         this.cycle = cycle;
     }
 
+    public String getRepeat() {
+        return repeat;
+    }
 
-
-
+    public void setRepeat(String repeat) {
+        this.repeat = repeat;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Clock clock = (Clock) o;
-        return clockId == clock.clockId &&
+        return deviceId == clock.deviceId &&
                 Objects.equals(id, clock.id);
     }
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(clockId, id);
+        return Objects.hash(deviceId, id);
     }
 
     @Override
     public String toString() {
         return "Clock{" +
                 "isOpen=" + isOpen +
-                ", clockId=" + clockId +
                 ", name='" + name + '\'' +
                 ", id='" + id + '\'' +
-                ", type=" + type +
                 ", cycle='" + cycle + '\'' +
                 ", time='" + time + '\'' +
                 ", cronTime='" + cronTime + '\'' +
                 ", repeat='" + repeat + '\'' +
                 '}';
+    }
+
+    public void parseCycle() {
+        if (!TextUtils.isEmpty(cycle)) {
+            String[] strings = cycle.split(" ");
+            if (strings.length > 5) {
+                time = String.format("%s:%s", strings[2], strings[1]);
+                cronTime = String.format("%s %s", strings[1], strings[2]);
+                repeat = strings[5];
+            }
+        }
     }
 
     @Override
@@ -125,24 +161,28 @@ public class Clock implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.isOpen);
-        dest.writeInt(this.clockId);
-        dest.writeString(this.name);
         dest.writeString(this.id);
-        dest.writeInt(this.type);
+        dest.writeInt(this.isOpen);
+        dest.writeInt(this.deviceId);
+        dest.writeString(this.name);
+        dest.writeByte(this.on ? (byte) 1 : (byte) 0);
         dest.writeString(this.cycle);
+        dest.writeInt(this.hour);
+        dest.writeInt(this.min);
         dest.writeString(this.time);
         dest.writeString(this.cronTime);
         dest.writeString(this.repeat);
     }
 
     protected Clock(Parcel in) {
-        this.isOpen = in.readInt();
-        this.clockId = in.readInt();
-        this.name = in.readString();
         this.id = in.readString();
-        this.type = in.readInt();
+        this.isOpen = in.readInt();
+        this.deviceId = in.readInt();
+        this.name = in.readString();
+        this.on = in.readByte() != 0;
         this.cycle = in.readString();
+        this.hour = in.readInt();
+        this.min = in.readInt();
         this.time = in.readString();
         this.cronTime = in.readString();
         this.repeat = in.readString();
@@ -159,15 +199,4 @@ public class Clock implements Parcelable{
             return new Clock[size];
         }
     };
-
-    public void parseCycle() {
-        if (!TextUtils.isEmpty(cycle)) {
-            String[] strings = cycle.split(" ");
-            if (strings.length>5) {
-                time = String.format("%s:%s", strings[2], strings[1]);
-                cronTime = String.format("%s %s", strings[1], strings[2]);
-                repeat = strings[5];
-            }
-        }
-    }
 }

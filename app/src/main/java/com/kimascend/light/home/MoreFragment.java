@@ -93,7 +93,7 @@ public class MoreFragment extends Fragment implements CallBack {
             }
             break;
             case R.id.btn_clock:
-                ClockActivity.start(getActivity(), ClockActivity.ACTION_CLOCK_LIST, null);
+//                ClockActivity.start(getActivity(), ClockActivity.ACTION_CLOCK_LIST, null);
                 break;
             case R.id.about_us:
                 UserActivity.start(getActivity(), UserActivity.ACTION_ABOUT_US);

@@ -184,6 +184,13 @@ public class LampAdapter extends RecyclerView.Adapter<LampAdapter.ViewHolder> {
         }
     }
 
+    public void markLamp(Lamp selected) {
+        for (Lamp lamp : mLampList) {
+            lamp.lampStatus.set(BindingAdapters.LIGHT_HIDE);
+        }
+        selected.lampStatus.set(BindingAdapters.LIGHT_SELECTED);
+    }
+
 
     @NonNull
     @Override
